@@ -1,0 +1,4 @@
+include ':impl'
+
+include ':protocol'
+project(':protocol').projectDir = new File('../LshApp-protocol/protocol')
