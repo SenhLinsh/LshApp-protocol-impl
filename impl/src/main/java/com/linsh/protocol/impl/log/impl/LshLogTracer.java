@@ -10,7 +10,7 @@ import java.util.List;
  *    author : Senh Linsh
  *    github : https://github.com/SenhLinsh
  *    date   : 2018/11/01
- *    desc   :
+ *    desc   : 日志追踪器
  * </pre>
  */
 class LshLogTracer implements LogTracer {
@@ -18,7 +18,7 @@ class LshLogTracer implements LogTracer {
     private static final int MAX_SIZE = 100;
     private LinkedList<String> traces;
 
-    public LshLogTracer() {
+    LshLogTracer() {
         traces = new LinkedList<>();
     }
 
@@ -36,7 +36,7 @@ class LshLogTracer implements LogTracer {
         }
     }
 
-    public List<String> getTraces() {
+    List<String> getTraces() {
         return traces;
     }
 }

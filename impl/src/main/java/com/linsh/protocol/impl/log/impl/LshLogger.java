@@ -18,78 +18,96 @@ class LshLogger implements Logger {
 
     @Override
     public void i(String msg) {
-        log(Log.INFO, null, msg, null);
+        log(Log.INFO, getClassName(), msg, null);
     }
 
     @Override
     public void i(String msg, Throwable thr) {
-        log(Log.INFO, null, msg, thr);
+        log(Log.INFO, getClassName(), msg, thr);
     }
 
     @Override
     public void i(String tag, String msg) {
-        log(Log.INFO, tag, msg, null);
+        log(Log.INFO, getClassName() + ": " + tag, msg, null);
     }
 
     @Override
     public void i(String tag, String msg, Throwable thr) {
-        log(Log.INFO, tag, msg, thr);
+        log(Log.INFO, getClassName() + ": " + tag, msg, thr);
     }
 
     @Override
     public void w(String msg) {
-        log(Log.WARN, null, msg, null);
+        log(Log.WARN, getClassName(), msg, null);
     }
 
     @Override
     public void w(Throwable thr) {
-        log(Log.WARN, null, null, thr);
+        log(Log.WARN, getClassName(), null, thr);
     }
 
     @Override
     public void w(String msg, Throwable thr) {
-        log(Log.WARN, null, msg, thr);
+        log(Log.WARN, getClassName(), msg, thr);
     }
 
     @Override
     public void w(String tag, String msg) {
-        log(Log.WARN, tag, msg, null);
+        log(Log.WARN, getClassName() + ": " + tag, msg, null);
     }
 
     @Override
     public void w(String tag, String msg, Throwable thr) {
-        log(Log.WARN, tag, msg, thr);
+        log(Log.WARN, getClassName() + ": " + tag, msg, thr);
     }
 
     @Override
     public void e(String msg) {
-        log(Log.ERROR, null, msg, null);
+        log(Log.ERROR, getClassName(), msg, null);
     }
 
     @Override
     public void e(Throwable thr) {
-        log(Log.ERROR, null, null, thr);
+        log(Log.ERROR, getClassName(), null, thr);
     }
 
     @Override
     public void e(String msg, Throwable thr) {
-        log(Log.ERROR, null, msg, thr);
+        log(Log.ERROR, getClassName(), msg, thr);
     }
 
     @Override
     public void e(String tag, String msg) {
-        log(Log.ERROR, tag, msg, null);
+        log(Log.ERROR, getClassName() + ": " + tag, msg, null);
     }
 
     @Override
     public void e(String tag, String msg, Throwable thr) {
-        log(Log.ERROR, tag, msg, thr);
+        log(Log.ERROR, getClassName() + ": " + tag, msg, thr);
     }
 
+    /**
+     * 打印到控制台
+     */
     void log(int priority, String tag, String msg, Throwable thr) {
-        tag = tag == null ? "" : tag;
+        tag = "IILogger: " + tag;
         msg = msg == null ? thr == null ? "" : Log.getStackTraceString(thr) :
                 thr == null ? msg : msg + "\n" + Log.getStackTraceString(thr);
         Log.println(priority, tag, msg);
+    }
+
+    /**
+     * 获取调用 Log 方法的类名
+     */
+    private static String getClassName() {
+        StackTraceElement thisMethodStack = (new Exception()).getStackTrace()[2];
+        String result = thisMethodStack.getClassName();
+        String[] split = result.split("\\.");
+        try {
+            result = split[split.length - 1];
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

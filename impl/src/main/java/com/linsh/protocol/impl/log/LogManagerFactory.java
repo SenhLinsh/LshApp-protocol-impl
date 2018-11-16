@@ -1,8 +1,10 @@
 package com.linsh.protocol.impl.log;
 
 
+import com.linsh.protocol.impl.log.empty.EmptyLogManager;
 import com.linsh.protocol.impl.log.impl.LshLogManager;
 import com.linsh.protocol.log.LogManager;
+import com.linsh.utilseverywhere.AppUtils;
 
 import java.util.List;
 
@@ -16,7 +18,11 @@ import java.util.List;
  */
 public class LogManagerFactory {
 
-    private static final LogManager LOG_MANAGER = new LshLogManager();
+    private static final LogManager LOG_MANAGER;
+
+    static {
+        LOG_MANAGER = AppUtils.isAppDebug() ? new LshLogManager() : new EmptyLogManager();
+    }
 
     public static LogManager create() {
         return LOG_MANAGER;

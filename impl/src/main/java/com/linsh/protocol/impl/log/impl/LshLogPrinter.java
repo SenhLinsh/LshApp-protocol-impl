@@ -24,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 class LshLogPrinter extends LshLogger implements LogPrinter {
 
-    static File logDir;
+    private static File logDir;
     private static File logFile;
     private static Date refreshDate = new Date();
 
@@ -44,15 +44,21 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
         });
     }
 
+    /**
+     * 打印日志到本地
+     */
     @Override
-    void log(int priority, String tag, String msg, Throwable thr) {
+    void log(final int priority, final String tag, final String msg, final Throwable thr) {
+        // 调用父类, 打印打控制台
         super.log(priority, tag, msg, thr);
+        // 更新文件名
         refreshFileTime();
-        final String log = LshLogManager.getLog(PRIORITY_STR[priority], tag, msg, thr);
+        // 后台打印
         final File file = logFile;
-        Schedulers.io().createWorker().schedule(new Runnable() {
+        Client.thread().io(new Runnable() {
             @Override
             public void run() {
+                String log = LshLogManager.getLog(PRIORITY_STR[priority], tag, msg, thr);
                 FileUtils.writeString(file, log, true, true);
             }
         });
@@ -82,18 +88,18 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
             for (File file : files) {
                 String name = file.getName();
                 long date = DateUtils.parse(name, "yyyy-MM-dd");
-                if (date > 0 && System.currentTimeMillis() - date < 7 * 24 * 60 * 1000L) {
+                if (date > 0 && System.currentTimeMillis() - date < 7 * 24 * 60 * 60 * 1000L) {
                     continue;
                 }
                 boolean delete = file.delete();
                 if (delete) {
                     Client.log().print().i("删除无效 log 文件: " + file.getName());
                 } else {
-                    Client.log().print().e("删除无效 log 文件失败");
+                    Client.log().print().e("删除无效 log 文件失败: " + file.getName());
                 }
             }
         } else {
-            Client.log().print().e("LshLogPrinter.logDir.listFiles() == null");
+            Client.log().print().e("IILogPrinter.logDir.listFiles() == null");
         }
     }
 }
