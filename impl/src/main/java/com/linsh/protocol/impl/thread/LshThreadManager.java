@@ -21,21 +21,21 @@ public class LshThreadManager implements ThreadManager {
 
     @Override
     public void single(Runnable task) {
-        Schedulers.single().createWorker().schedule(task);
+        Schedulers.single().scheduleDirect(task);
     }
 
     @Override
     public void small(Runnable task) {
-        Schedulers.io().createWorker().schedule(task);
+        Schedulers.io().scheduleDirect(task);
     }
 
     @Override
     public void io(Runnable task) {
-        Schedulers.io().createWorker().schedule(task);
+        Schedulers.io().scheduleDirect(task);
     }
 
     @Override
     public void newThread(Runnable task) {
-        Schedulers.newThread().createWorker().schedule(task);
+        Schedulers.newThread().scheduleDirect(task);
     }
 }
