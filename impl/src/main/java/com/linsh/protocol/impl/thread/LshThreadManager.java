@@ -25,7 +25,7 @@ public class LshThreadManager implements ThreadManager {
     }
 
     @Override
-    public void small(Runnable task) {
+    public void piece(Runnable task) {
         Schedulers.io().scheduleDirect(task);
     }
 
