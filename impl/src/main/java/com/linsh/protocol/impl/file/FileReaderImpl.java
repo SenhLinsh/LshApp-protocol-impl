@@ -5,9 +5,9 @@ import android.graphics.Bitmap;
 import com.google.gson.Gson;
 import com.linsh.protocol.Client;
 import com.linsh.protocol.Consumer;
-import com.linsh.protocol.TaskHolder;
+import com.linsh.protocol.Task;
 import com.linsh.protocol.file.FileReader;
-import com.linsh.protocol.impl.TaskHolderImpl;
+import com.linsh.protocol.impl.TaskImpl;
 import com.linsh.utilseverywhere.BitmapUtils;
 import com.linsh.utilseverywhere.FileUtils;
 
@@ -65,8 +65,8 @@ class FileReaderImpl implements FileReader {
     }
 
     @Override
-    public TaskHolder<String> read() {
-        return new TaskHolderImpl<>(new Callable<String>() {
+    public Task<String> read() {
+        return new TaskImpl<>(new Callable<String>() {
             @Override
             public String call() {
                 return FileUtils.readAsString(file);
@@ -75,8 +75,8 @@ class FileReaderImpl implements FileReader {
     }
 
     @Override
-    public TaskHolder<List<String>> readLines() {
-        return new TaskHolderImpl<>(new Callable<List<String>>() {
+    public Task<List<String>> readLines() {
+        return new TaskImpl<>(new Callable<List<String>>() {
             @Override
             public List<String> call() {
                 return FileUtils.readLines(file);
@@ -85,8 +85,8 @@ class FileReaderImpl implements FileReader {
     }
 
     @Override
-    public <T> TaskHolder<T> readJson(final Class<T> classOfT) {
-        return new TaskHolderImpl<>(new Callable<T>() {
+    public <T> Task<T> readJson(final Class<T> classOfT) {
+        return new TaskImpl<>(new Callable<T>() {
             @Override
             public T call() {
                 String json = FileUtils.readAsString(file);
@@ -96,8 +96,8 @@ class FileReaderImpl implements FileReader {
     }
 
     @Override
-    public TaskHolder<Bitmap> readBitmap() {
-        return new TaskHolderImpl<>(new Callable<Bitmap>() {
+    public Task<Bitmap> readBitmap() {
+        return new TaskImpl<>(new Callable<Bitmap>() {
             @Override
             public Bitmap call() {
                 return BitmapUtils.getBitmap(file);
@@ -106,8 +106,8 @@ class FileReaderImpl implements FileReader {
     }
 
     @Override
-    public TaskHolder<byte[]> readBytes() {
-        return new TaskHolderImpl<>(new Callable<byte[]>() {
+    public Task<byte[]> readBytes() {
+        return new TaskImpl<>(new Callable<byte[]>() {
             @Override
             public byte[] call() {
                 throw new IllegalArgumentException("该方法暂未开发");

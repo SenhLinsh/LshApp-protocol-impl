@@ -147,7 +147,7 @@ class FileWriterImpl implements FileWriter {
     }
 
     @Override
-    public Task task() {
-        return new TaskImpl(file);
+    public FileTask task() {
+        return new FileTaskImpl(file);
     }
 }

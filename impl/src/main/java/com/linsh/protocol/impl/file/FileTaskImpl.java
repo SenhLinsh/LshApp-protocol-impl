@@ -28,24 +28,24 @@ import io.reactivex.schedulers.Schedulers;
  *    desc   :
  * </pre>
  */
-class TaskImpl implements FileWriter.Task {
+class FileTaskImpl implements FileWriter.FileTask {
 
     private final File file;
     private List<Consumer<BufferedWriter>> consumers;
     private Callable<Boolean> callable;
 
-    TaskImpl(File file) {
+    FileTaskImpl(File file) {
         this.file = file;
         this.consumers = new LinkedList<>();
     }
 
     @Override
-    public FileWriter.Task write(final String content) {
+    public FileWriter.FileTask write(final String content) {
         return write(content, false);
     }
 
     @Override
-    public FileWriter.Task write(final String content, final boolean append) {
+    public FileWriter.FileTask write(final String content, final boolean append) {
         if (!append) consumers.clear();
         consumers.add(new Consumer<BufferedWriter>() {
             @Override
@@ -57,12 +57,12 @@ class TaskImpl implements FileWriter.Task {
     }
 
     @Override
-    public FileWriter.Task write(List<String> contents) {
+    public FileWriter.FileTask write(List<String> contents) {
         return write(contents, false);
     }
 
     @Override
-    public FileWriter.Task write(final List<String> contents, boolean append) {
+    public FileWriter.FileTask write(final List<String> contents, boolean append) {
         if (!append) consumers.clear();
         consumers.add(new Consumer<BufferedWriter>() {
             @Override
@@ -76,12 +76,12 @@ class TaskImpl implements FileWriter.Task {
     }
 
     @Override
-    public FileWriter.Task writeLine() {
+    public FileWriter.FileTask writeLine() {
         return writeLines(1);
     }
 
     @Override
-    public FileWriter.Task writeLines(final int lines) {
+    public FileWriter.FileTask writeLines(final int lines) {
         consumers.add(new Consumer<BufferedWriter>() {
             @Override
             public void accept(BufferedWriter bufferedWriter) throws Exception {
@@ -94,7 +94,7 @@ class TaskImpl implements FileWriter.Task {
     }
 
     @Override
-    public FileWriter.Task write(final Bitmap bitmap) {
+    public FileWriter.FileTask write(final Bitmap bitmap) {
         callable = new Callable<Boolean>() {
             @Override
             public Boolean call() {
@@ -105,7 +105,7 @@ class TaskImpl implements FileWriter.Task {
     }
 
     @Override
-    public FileWriter.Task write(final byte[] bytes) {
+    public FileWriter.FileTask write(final byte[] bytes) {
         consumers.clear();
         callable = new Callable<Boolean>() {
             @Override
@@ -117,7 +117,7 @@ class TaskImpl implements FileWriter.Task {
     }
 
     @Override
-    public FileWriter.Task write(final InputStream stream) {
+    public FileWriter.FileTask write(final InputStream stream) {
         consumers.clear();
         callable = new Callable<Boolean>() {
             @Override

@@ -3,7 +3,7 @@ package com.linsh.protocol.impl;
 import android.support.annotation.NonNull;
 
 import com.linsh.protocol.Callback;
-import com.linsh.protocol.TaskHolder;
+import com.linsh.protocol.Task;
 
 import java.util.concurrent.Callable;
 
@@ -20,21 +20,21 @@ import io.reactivex.schedulers.Schedulers;
  *    desc   :
  * </pre>
  */
-public class TaskHolderImpl<T> implements TaskHolder<T> {
+public class TaskImpl<T> implements Task<T> {
 
     private final Callable<T> callable;
     private final Scheduler asyncScheduler;
     private final Scheduler callbackScheduler;
 
-    public TaskHolderImpl(@NonNull Callable<T> callable) {
+    public TaskImpl(@NonNull Callable<T> callable) {
         this(callable, Schedulers.io(), AndroidSchedulers.mainThread());
     }
 
-    public TaskHolderImpl(@NonNull Callable<T> callable, Scheduler asyncScheduler) {
-        this(callable, Schedulers.io(), AndroidSchedulers.mainThread());
+    public TaskImpl(@NonNull Callable<T> callable, Scheduler asyncScheduler) {
+        this(callable, asyncScheduler, AndroidSchedulers.mainThread());
     }
 
-    public TaskHolderImpl(@NonNull Callable<T> callable, Scheduler asyncScheduler, Scheduler callbackScheduler) {
+    public TaskImpl(@NonNull Callable<T> callable, Scheduler asyncScheduler, Scheduler callbackScheduler) {
         this.callable = callable;
         this.asyncScheduler = asyncScheduler;
         this.callbackScheduler = callbackScheduler;
