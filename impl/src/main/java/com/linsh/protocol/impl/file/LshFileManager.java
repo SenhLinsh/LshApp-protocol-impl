@@ -86,7 +86,7 @@ public class LshFileManager implements FileManager {
                     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
                         if (id == requestCode) {
                             UEPermission.Storage.checkResult(permissions, grantResults);
-                            Client.activity().target(activity).remove(this);
+                            Client.activity().target(activity).unsubscribe(this);
                         }
                     }
 
