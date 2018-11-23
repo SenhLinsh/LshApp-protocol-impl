@@ -14,7 +14,7 @@ import java.io.File;
  *    author : Senh Linsh
  *    github : https://github.com/SenhLinsh
  *    date   : 2018/11/21
- *    desc   :
+ *    desc   : 放到沙发上的范德萨发
  * </pre>
  */
 public class GlideImageManager implements ImageManager {
