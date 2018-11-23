@@ -5,7 +5,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.linsh.protocol.Client;
-import com.linsh.protocol.Config;
 import com.linsh.protocol.activity.ActivitySubscribe;
 import com.linsh.protocol.file.FileBuilder;
 import com.linsh.protocol.file.FileManager;
@@ -25,15 +24,6 @@ import java.io.File;
  */
 public class LshFileManager implements FileManager {
 
-    private final String appDir;
-
-    public LshFileManager(Config config) {
-        String appDir = config.getString(Config.FILE_STRING_APP_DIR);
-        if (appDir == null)
-            throw new IllegalArgumentException("");
-        this.appDir = appDir.endsWith("/") ? appDir : appDir + "/";
-    }
-
     @Override
     public FileBuilder path(String path) {
         return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH, path);
@@ -49,7 +39,7 @@ public class LshFileManager implements FileManager {
     @Override
     public FileBuilder app(String filename) {
         return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH,
-                appDir + filename);
+                Client.config().file().appDir() + filename);
     }
 
     @Override
