@@ -297,7 +297,7 @@ public class TypesImpl implements Types {
         return Client.value().color().text();
     }
 
-    static class Builder implements Types.Builder {
+    public static class Builder implements Types.Builder {
         private SizeType size;
         private SizeType width;
         private SizeType height;
