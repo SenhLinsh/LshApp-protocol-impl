@@ -5,6 +5,7 @@ import android.app.Dialog;
 
 import com.linsh.dialog.LshDialog;
 import com.linsh.protocol.Client;
+import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.TextDialogHelper;
 import com.linsh.protocol.ui.view.ViewHelper;
 

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.support.v7.widget.RecyclerView;
 
 import com.linsh.dialog.LshDialog;
+import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.ListDialogHelper;
 import com.linsh.protocol.ui.view.ViewHelper;
 import com.linsh.utilseverywhere.ListUtils;
