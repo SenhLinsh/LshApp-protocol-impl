@@ -3,9 +3,9 @@ package com.linsh.protocol.impl.activity;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.linsh.protocol.activity.ActivityBuilder;
 import com.linsh.protocol.activity.ActivityDelegate;
 import com.linsh.protocol.activity.ActivityManager;
+import com.linsh.protocol.activity.IntentDelegate;
 
 /**
  * <pre>
@@ -22,17 +22,17 @@ public class LshActivityManager implements ActivityManager {
     }
 
     @Override
-    public ActivityBuilder build() {
-        return new ActivityBuilderImpl();
+    public IntentDelegate build() {
+        return new IntentDelegateImpl();
     }
 
     @Override
-    public ActivityBuilder build(Class<? extends Activity> target) {
-        return new ActivityBuilderImpl(target);
+    public IntentDelegate build(Class<? extends Activity> target) {
+        return new IntentDelegateImpl(target);
     }
 
     @Override
-    public ActivityBuilder build(Intent intent) {
-        return new ActivityBuilderImpl(intent);
+    public IntentDelegate build(Intent intent) {
+        return new IntentDelegateImpl(intent);
     }
 }

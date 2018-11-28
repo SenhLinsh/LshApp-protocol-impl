@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.linsh.protocol.activity.ActivityDelegate;
 import com.linsh.protocol.activity.IObservableActivity;
 import com.linsh.protocol.activity.ActivitySubscribe;
+import com.linsh.protocol.activity.IntentDelegate;
 
 /**
  * <pre>
@@ -63,5 +64,10 @@ class ActivityDelegateImpl implements ActivityDelegate {
     @Override
     public <T extends ActivitySubscribe> T useSubscriber(T subscriber) {
         return observableActivity.subscribe(subscriber);
+    }
+
+    @Override
+    public IntentDelegate intent() {
+        return null;
     }
 }

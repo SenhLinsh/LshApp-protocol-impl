@@ -11,7 +11,7 @@ android {
         minSdkVersion versions.minSdkVersion
         targetSdkVersion versions.targetSdkVersion
         versionCode 1
-        versionName "0.2.0"
+        versionName "0.3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -33,6 +33,28 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+
+    /////// 以下为配置 library 注释在打包 jar 后保留 /////////
+    // 打包源码 jar
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+    task javadoc(type: Javadoc) {
+        failOnError false
+        source = android.sourceSets.main.java.sourceFiles
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        classpath += configurations.compile
+    }
+    // 打包文档 jar
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
 }
 
 dependencies {
@@ -49,6 +71,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     implementation 'com.github.SenhLinsh:LshViews:1.0.1'
-    implementation 'com.github.SenhLinsh:LshApp-protocol:0.2'
+    implementation 'com.github.SenhLinsh:LshApp-protocol:0.3'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }
