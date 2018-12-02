@@ -57,11 +57,6 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     }
 
     @Override
-    public RecyclerView.Adapter getAdapter() {
-        return recyclerView.getAdapter();
-    }
-
-    @Override
     public List<T> getData() {
         return listData;
     }

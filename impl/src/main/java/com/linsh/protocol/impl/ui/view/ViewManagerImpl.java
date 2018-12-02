@@ -23,19 +23,29 @@ public class ViewManagerImpl implements ViewManager {
 
     @Override
     public <V extends ViewProtocol> V protocol(Activity activity, Class<V> protocol) {
+        return protocol(activity, protocol, null);
+    }
+
+    @Override
+    public <V extends ViewProtocol> V protocol(Activity activity, Class<V> protocol, String key) {
         JsonLayoutFinder jsonLayoutFinder = Client.activity().target(activity).useSubscriber(JsonLayoutFinder.class);
-        return jsonLayoutFinder.findProtocol(activity, protocol, null);
+        return jsonLayoutFinder.findProtocol(activity, protocol, key);
     }
 
     @Override
     public <V extends ViewProtocol> V protocol(View view, Class<V> protocol) {
+        return protocol(view, protocol, null);
+    }
+
+    @Override
+    public <V extends ViewProtocol> V protocol(View view, Class<V> protocol, String key) {
         Context context = view.getContext();
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
             JsonLayoutFinder jsonLayoutFinder = Client.activity().target(activity).useSubscriber(JsonLayoutFinder.class);
-            return jsonLayoutFinder.findProtocol(activity, protocol, null);
+            return jsonLayoutFinder.findProtocol(activity, protocol, key);
         }
-        return null;
+        throw new IllegalArgumentException("暂未开发 Activity 以外的界面");
     }
 
     @Override

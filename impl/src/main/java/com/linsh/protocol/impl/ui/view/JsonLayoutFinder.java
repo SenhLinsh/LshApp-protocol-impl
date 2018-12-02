@@ -68,10 +68,39 @@ public class JsonLayoutFinder implements ActivitySubscribe {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+        Class<? extends ViewProtocol> impl = null;
+        if (protocolInfo.name.contains(".")) {
+            try {
+                Class<?> protocolClass = ClassUtils.getClass(protocolInfo.name);
+                if (!protocolClass.isInterface() && ViewProtocol.class.isAssignableFrom(protocolClass)) {
+                    impl = (Class<? extends ViewProtocol>) protocolClass;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (impl == null) {
+            impl = Client.config().ui().getImpl(protocolInfo.name, protocolInfo.key);
+            if (impl == null)
+                impl = Client.config().ui().getImpl(protocolInfo.name, "default");
+            if (impl == null)
+                Client.config().ui().getImpl(protocolInfo.name, null);
+        }
+        if (impl != null) {
+            try {
+                Object instance = ClassUtils.newInstance(impl, new Class[]{View.class}, new Object[]{view});
+                if (instance instanceof ViewProtocol) {
+                    if (instance instanceof FuncViewProtocol)
+                        ((FuncViewProtocol) instance).setFuncs(protocolInfo.funcs);
+                    return (ViewProtocol) instance;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Client.log().print().w("实例化 ViewProtocol 失败", "protocolInfo.name: " + protocolInfo.name + ", key: " + protocolInfo.key);
         }
-        // TODO: 2018/12/2
-        return null;
+        throw new IllegalArgumentException("没有找到合适的实现类来生成实例");
     }
 
     public View findViewByKey(Activity activity, String keyId) {
