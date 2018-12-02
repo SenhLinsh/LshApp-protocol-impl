@@ -21,7 +21,7 @@ public class FuncViewProtocolImpl implements FuncViewProtocol {
 
     private final View view;
     public Map<String, FuncInfo> funcs;
-    public HashMap<String, View> views;
+    public Map<String, View> views;
 
     public FuncViewProtocolImpl(View view) {
         this.view = view;
@@ -44,6 +44,7 @@ public class FuncViewProtocolImpl implements FuncViewProtocol {
         if (funcInfo.id != null) {
             Context context = getView().getContext();
             if (context instanceof Activity) {
+                if (views == null) views = new HashMap<>();
                 View childView = views.get(funcInfo.id);
                 if (childView == null) {
                     JsonLayoutFinder finder = Client.activity().target((Activity) context).useSubscriber(JsonLayoutFinder.class);
