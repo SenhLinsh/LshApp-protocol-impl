@@ -85,7 +85,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
             if (impl == null)
                 impl = Client.config().ui().getImpl(protocolInfo.name, "default");
             if (impl == null)
-                Client.config().ui().getImpl(protocolInfo.name, null);
+                impl = Client.config().ui().getImpl(protocolInfo.name, null);
         }
         if (impl != null) {
             try {
