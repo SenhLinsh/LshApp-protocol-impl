@@ -6,7 +6,7 @@ import android.app.Dialog;
 import com.linsh.dialog.LshDialog;
 import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.InputDialogHelper;
-import com.linsh.protocol.ui.view.ViewHelper;
+import com.linsh.protocol.ui.view.ViewProtocol;
 
 /**
  * <pre>
@@ -119,11 +119,13 @@ class InputDialogHelperImpl implements InputDialogHelper {
 
     @Override
     public Dialog build() {
+        // TODO: 2018/12/2
         return null;
     }
 
     @Override
-    public ViewHelper getContentView() {
+    public ViewProtocol getContentView() {
+        // TODO: 2018/12/2
         return null;
     }
 }

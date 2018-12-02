@@ -2,12 +2,13 @@ package com.linsh.protocol.impl.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.view.View;
 
 import com.linsh.dialog.LshDialog;
 import com.linsh.protocol.Client;
 import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.TextDialogHelper;
-import com.linsh.protocol.ui.view.ViewHelper;
+import com.linsh.protocol.ui.view.ViewProtocol;
 
 /**
  * <pre>
@@ -110,13 +111,14 @@ class TextDialogHelperImpl implements TextDialogHelper {
 
     @Override
     public Dialog build() {
+        // TODO: 2018/12/2
         return null;
     }
 
     @Override
-    public ViewHelper getContentView() {
+    public ViewProtocol<View> getContentView() {
         if (dialog != null)
-            return Client.ui().view((Activity) dialog.getContext()).view(dialog.getWindow().getDecorView());
+            return Client.ui().view().view(dialog.getWindow().getDecorView());
         return null;
     }
 }

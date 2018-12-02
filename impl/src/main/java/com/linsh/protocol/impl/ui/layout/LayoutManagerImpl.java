@@ -1,11 +1,11 @@
 package com.linsh.protocol.impl.ui.layout;
 
-import android.app.Activity;
+import android.content.Context;
 
-import com.linsh.protocol.Type;
 import com.linsh.protocol.ui.layout.LayoutManager;
-import com.linsh.protocol.ui.layout.ListViewHelper;
-import com.linsh.protocol.ui.layout.TabLayoutHelper;
+import com.linsh.protocol.ui.layout.ListViewProtocol;
+
+import java.util.List;
 
 /**
  * <pre>
@@ -17,19 +17,35 @@ import com.linsh.protocol.ui.layout.TabLayoutHelper;
  */
 public class LayoutManagerImpl implements LayoutManager {
 
-    private final Activity activity;
+    private final Context context;
 
-    public LayoutManagerImpl(Activity activity) {
-        this.activity = activity;
+    public LayoutManagerImpl(Context context) {
+        this.context = context;
     }
 
     @Override
-    public <T> ListViewHelper<T> list(Type<T> typeOfData) {
-        return new ListViewHelperImpl<>(activity);
+    public <T> ListViewProtocol<T> list() {
+        return new ListViewProtocolImpl<>(context);
     }
 
     @Override
-    public <T> TabLayoutHelper<T> tab(Type<T> typeOfData) {
-        throw new IllegalArgumentException("暂未开发");
+    public <T> ListViewProtocol<T> list(List<T> data) {
+        ListViewProtocolImpl<T> listViewProtocol = new ListViewProtocolImpl<>(context);
+        listViewProtocol.setData(data);
+        return listViewProtocol;
+    }
+
+    @Override
+    public <T> ListViewProtocol<T> list(T[] data) {
+        ListViewProtocolImpl<T> listViewProtocol = new ListViewProtocolImpl<>(context);
+        listViewProtocol.setData(data);
+        return listViewProtocol;
+    }
+
+    @Override
+    public <T> ListViewProtocol<T> list(T data) {
+        ListViewProtocolImpl<T> listViewProtocol = new ListViewProtocolImpl<>(context);
+        listViewProtocol.setSingleData(data);
+        return listViewProtocol;
     }
 }

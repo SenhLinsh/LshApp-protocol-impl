@@ -2,10 +2,12 @@ package com.linsh.protocol.impl.activity;
 
 import android.app.Activity;
 
+import com.linsh.protocol.Client;
 import com.linsh.protocol.activity.ActivityDelegate;
-import com.linsh.protocol.activity.IObservableActivity;
 import com.linsh.protocol.activity.ActivitySubscribe;
+import com.linsh.protocol.activity.IObservableActivity;
 import com.linsh.protocol.activity.IntentDelegate;
+import com.linsh.protocol.ui.view.ViewProtocol;
 
 /**
  * <pre>
@@ -68,6 +70,11 @@ class ActivityDelegateImpl implements ActivityDelegate {
 
     @Override
     public IntentDelegate intent() {
-        return null;
+        return new IntentDelegateImpl();
+    }
+
+    @Override
+    public <V extends ViewProtocol> V viewProtocol(Class<V> protocol) {
+        return Client.ui().view().protocol((Activity) observableActivity, protocol);
     }
 }

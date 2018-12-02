@@ -1,6 +1,7 @@
 package com.linsh.protocol.impl.ui;
 
 import android.app.Activity;
+import android.content.Context;
 
 import com.linsh.protocol.Client;
 import com.linsh.protocol.impl.ui.dialog.DialogManagerImpl;
@@ -8,7 +9,6 @@ import com.linsh.protocol.impl.ui.layout.LayoutManagerImpl;
 import com.linsh.protocol.impl.ui.popup.PopupWindowManagerImpl;
 import com.linsh.protocol.impl.ui.toast.ToastManagerImpl;
 import com.linsh.protocol.impl.ui.view.ViewManagerImpl;
-import com.linsh.protocol.impl.ui.view.ViewProxyImpl;
 import com.linsh.protocol.impl.ui.widget.WidgetManagerImpl;
 import com.linsh.protocol.ui.UIManager;
 import com.linsh.protocol.ui.dialog.DialogManager;
@@ -35,13 +35,13 @@ public class LshUIManager implements UIManager {
     }
 
     @Override
-    public LayoutManager layout(Activity activity) {
-        return new LayoutManagerImpl(activity);
+    public LayoutManager layout(Context context) {
+        return new LayoutManagerImpl(context);
     }
 
     @Override
-    public PopupWindowManager popup(Activity activity) {
-        return new PopupWindowManagerImpl(activity);
+    public PopupWindowManager popup(Context context) {
+        return new PopupWindowManagerImpl(context);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class LshUIManager implements UIManager {
     }
 
     @Override
-    public ViewManager view(Activity activity) {
-        return new ViewManagerImpl(activity);
+    public ViewManager view() {
+        return new ViewManagerImpl();
     }
 
     @Override

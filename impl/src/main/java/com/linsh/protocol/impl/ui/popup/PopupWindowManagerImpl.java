@@ -1,13 +1,13 @@
 package com.linsh.protocol.impl.ui.popup;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.view.View;
 import android.widget.PopupWindow;
 
 import com.linsh.protocol.Client;
 import com.linsh.protocol.ui.popup.PopupWindowManager;
-import com.linsh.protocol.ui.view.ViewHelper;
+import com.linsh.protocol.ui.view.ViewProtocol;
 import com.linsh.protocol.ui.window.WindowViewHelper;
 
 /**
@@ -20,13 +20,13 @@ import com.linsh.protocol.ui.window.WindowViewHelper;
  */
 public class PopupWindowManagerImpl implements PopupWindowManager {
 
-    private final Activity activity;
+    private final Context context;
     private final PopupWindow window;
-    private ViewHelper viewHelper;
+    private ViewProtocol viewHelper;
 
-    public PopupWindowManagerImpl(Activity activity) {
-        this.activity = activity;
-        window = new PopupWindow(activity);
+    public PopupWindowManagerImpl(Context context) {
+        this.context = context;
+        window = new PopupWindow(context);
     }
 
     @Override
@@ -36,20 +36,20 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
 
     @Override
     public PopupWindowManager setView(int layout) {
-        viewHelper = Client.ui().view(activity).inflate(layout);
+        viewHelper = Client.ui().view().inflate(layout, context);
         window.setContentView(viewHelper.getView());
         return this;
     }
 
     @Override
     public PopupWindowManager setView(View view) {
-        viewHelper = Client.ui().view(activity).view(view);
+        viewHelper = Client.ui().view().view(view);
         window.setContentView(viewHelper.getView());
         return this;
     }
 
     @Override
-    public PopupWindowManager setView(ViewHelper viewHelper) {
+    public PopupWindowManager setView(ViewProtocol viewHelper) {
         this.viewHelper = viewHelper;
         window.setContentView(viewHelper.getView());
         return this;
@@ -57,7 +57,7 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
 
     @Override
     public PopupWindowManager setView(WindowViewHelper helper) {
-        viewHelper = Client.ui().view(activity).view(helper.getView());
+        viewHelper = Client.ui().view().view(helper.getView());
         window.setContentView(viewHelper.getView());
         return this;
     }

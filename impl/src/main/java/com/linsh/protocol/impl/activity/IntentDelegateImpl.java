@@ -218,12 +218,6 @@ class IntentDelegateImpl implements IntentDelegate {
     }
 
     @Override
-    public <T> T getJsonExtra(Class<T> classOfT, int index) {
-        String json = intent.getStringExtra(INTENT_EXTRA_PREFIX + classOfT.getName());
-        return new Gson().fromJson(json, classOfT);
-    }
-
-    @Override
     public IntentDelegate putExtra(String key, Object value) {
         if (value instanceof String)
             intent.putExtra(key, (String) value);
@@ -242,11 +236,6 @@ class IntentDelegateImpl implements IntentDelegate {
         else
             throw new IllegalArgumentException("不支持该类型的 Extra : " + value.getClass());
         return this;
-    }
-
-    @Override
-    public <T> T getExtra(String key) {
-        return null;
     }
 
     @Override

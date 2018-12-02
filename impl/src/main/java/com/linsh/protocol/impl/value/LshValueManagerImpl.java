@@ -4,7 +4,6 @@ import com.linsh.protocol.config.ValueConfig;
 import com.linsh.protocol.value.ColorCreator;
 import com.linsh.protocol.value.IdCreator;
 import com.linsh.protocol.value.TextSizeCreator;
-import com.linsh.protocol.value.Types;
 import com.linsh.protocol.value.ValueManager;
 
 /**
@@ -21,11 +20,6 @@ public class LshValueManagerImpl implements ValueManager {
 
     public LshValueManagerImpl(ValueConfig config) {
         this.config = config;
-    }
-
-    @Override
-    public Types.Builder types() {
-        return new TypesImpl.Builder();
     }
 
     @Override
