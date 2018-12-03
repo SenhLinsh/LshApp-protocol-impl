@@ -129,9 +129,8 @@ public class JsonLayoutInflater {
             else if (view instanceof RelativeLayout)
                 ((RelativeLayout) view).setGravity(info.gravity);
         }
-        if (info.src != null) {
-            // TODO: 2018/11/29
-        }
+        if (info.src != null && view instanceof ImageView)
+            Client.image().load(info.src, (ImageView) view);
         if (view instanceof TextView) {
             if (info.textSize >= 0)
                 ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, info.textSize);
