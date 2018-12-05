@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view.entity;
+package com.linsh.protocol.impl.ui.view;
 
 import android.annotation.SuppressLint;
 import android.widget.LinearLayout;

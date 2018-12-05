@@ -82,21 +82,6 @@ public abstract class ObservableActivity extends AppCompatActivity implements IO
     /**
      * 注册订阅者
      * <p>
-     * 传入的类名会被自动实例化, 且默认使用无参构造实例化. 如果实例化失败, 则会订阅失败
-     *
-     * @param classOfSubscriber 订阅者类名(全名)
-     * @return 是否成功订阅
-     */
-    @Deprecated
-    @Override
-    public <T extends ActivitySubscribe> T subscribe(String classOfSubscriber) {
-        // TODO: 2018/12/3 deleted
-        return null;
-    }
-
-    /**
-     * 注册订阅者
-     * <p>
      * 传入的类对象会被自动实例化, 且默认使用无参构造实例化. 如果实例化失败, 则会订阅失败
      *
      * @param classOfSubscriber 订阅者类对象

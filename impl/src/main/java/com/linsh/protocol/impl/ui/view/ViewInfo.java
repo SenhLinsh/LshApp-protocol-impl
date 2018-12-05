@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view.entity;
+package com.linsh.protocol.impl.ui.view;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linsh.protocol.Client;
-import com.linsh.protocol.impl.ui.view.JsonLayoutFinder;
 import com.linsh.utilseverywhere.ClassUtils;
 
 import org.json.JSONException;

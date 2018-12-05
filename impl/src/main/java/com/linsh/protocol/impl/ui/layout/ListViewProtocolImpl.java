@@ -41,7 +41,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     private List<ItemInfo<T>> items = new ArrayList<>();
     private List<ItemInfo<T>> headers = new ArrayList<>();
     private List<ItemInfo<T>> footers = new ArrayList<>();
-    private ViewProtocol divider;
+    private ItemInfo<T> divider;
 
     private OnItemClickListener<T> onItemClickListener;
     private OnItemLongClickListener<T> onItemLongClickListener;
@@ -141,8 +141,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
 
     @Override
     public <V extends ViewProtocol> ListViewProtocol<T> addItemView(Class<V> itemHelper, OnBindItemViewListener<T, V> listener, BiFunction<ListViewProtocol<T>, Integer, Boolean> filter) {
-        V protocol = Client.ui().view().protocol(getView(), itemHelper);
-        items.add(new ItemInfo<>(protocol, listener, filter));
+        items.add(new ItemInfo<>(itemHelper, listener, filter));
         return this;
     }
 
@@ -154,8 +153,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
 
     @Override
     public <V extends ViewProtocol> ListViewProtocol<T> addHeader(Class<V> itemHelper, OnBindItemViewListener<T, V> listener) {
-        V protocol = Client.ui().view().protocol(getView(), itemHelper);
-        items.add(new ItemInfo<>(protocol, listener, null));
+        items.add(new ItemInfo<>(itemHelper, listener, null));
         return this;
     }
 
@@ -167,20 +165,19 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
 
     @Override
     public <V extends ViewProtocol> ListViewProtocol<T> addFooter(Class<V> itemHelper, OnBindItemViewListener<T, V> listener) {
-        V protocol = Client.ui().view().protocol(getView(), itemHelper);
-        items.add(new ItemInfo<>(protocol, listener, null));
+        items.add(new ItemInfo<>(itemHelper, listener, null));
         return this;
     }
 
     @Override
     public <V extends ViewProtocol> ListViewProtocol<T> setDivider(Class<V> itemHelper) {
-        divider = Client.ui().view().protocol(getView(), itemHelper);
+        divider = new ItemInfo<>(itemHelper, null, null);
         return this;
     }
 
     @Override
     public <V extends ViewProtocol> ListViewProtocol<T> setDivider(Class<V> itemHelper, OnBindItemViewListener<T, V> listener) {
-        divider = Client.ui().view().protocol(getView(), itemHelper);
+        divider = new ItemInfo<>(itemHelper, listener, null);
         return this;
     }
 
@@ -255,17 +252,20 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
         public ViewHolderImpl onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType < headers.size()) {
                 ItemInfo<T> itemInfo = headers.get(viewType);
-                return new ViewHolderImpl(itemInfo.protocol, itemInfo.listener, ListViewProtocolImpl.this);
+                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             viewType -= headers.size();
             if (viewType < items.size()) {
                 ItemInfo itemInfo = items.get(viewType);
-                return new ViewHolderImpl(itemInfo.protocol, itemInfo.listener, ListViewProtocolImpl.this);
+                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             viewType -= items.size();
             if (viewType < footers.size()) {
                 ItemInfo itemInfo = footers.get(viewType);
-                return new ViewHolderImpl(itemInfo.protocol, itemInfo.listener, ListViewProtocolImpl.this);
+                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             throw new IllegalArgumentException("viewType 无法对上");
         }
@@ -304,11 +304,11 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     }
 
     private static class ItemInfo<T> {
-        private final ViewProtocol protocol;
+        private final Class<? extends ViewProtocol> protocol;
         private final OnBindItemViewListener listener;
         private final BiFunction<ListViewProtocol<T>, Integer, Boolean> filter;
 
-        private ItemInfo(ViewProtocol protocol, OnBindItemViewListener listener, BiFunction<ListViewProtocol<T>, Integer, Boolean> filter) {
+        private ItemInfo(Class<? extends ViewProtocol> protocol, OnBindItemViewListener listener, BiFunction<ListViewProtocol<T>, Integer, Boolean> filter) {
             this.protocol = protocol;
             this.listener = listener;
             this.filter = filter;

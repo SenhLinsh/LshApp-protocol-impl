@@ -75,6 +75,6 @@ class ActivityDelegateImpl implements ActivityDelegate {
 
     @Override
     public <V extends ViewProtocol> V viewProtocol(Class<V> protocol) {
-        return Client.ui().view().protocol((Activity) observableActivity, protocol);
+        return Client.ui().view().findProtocol((Activity) observableActivity, protocol);
     }
 }

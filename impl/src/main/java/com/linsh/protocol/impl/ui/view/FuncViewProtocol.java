@@ -1,6 +1,5 @@
 package com.linsh.protocol.impl.ui.view;
 
-import com.linsh.protocol.impl.ui.view.entity.FuncInfo;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
 import java.util.Map;

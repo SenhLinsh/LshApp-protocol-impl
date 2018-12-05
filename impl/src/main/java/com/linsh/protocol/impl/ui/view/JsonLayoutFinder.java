@@ -6,7 +6,6 @@ import android.view.View;
 import com.linsh.protocol.Client;
 import com.linsh.protocol.activity.ActivitySubscribe;
 import com.linsh.protocol.impl.R;
-import com.linsh.protocol.impl.ui.view.entity.ProtocolInfo;
 import com.linsh.protocol.ui.view.ViewProtocol;
 import com.linsh.utilseverywhere.ClassUtils;
 
@@ -20,7 +19,7 @@ import java.util.HashMap;
  *    desc   :
  * </pre>
  */
-public class JsonLayoutFinder implements ActivitySubscribe {
+class JsonLayoutFinder implements ActivitySubscribe {
 
     private HashMap<String, Integer> keyIds = new HashMap<>();
     private HashMap<String, Integer> protocolIds = new HashMap<>();
@@ -29,7 +28,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
     public void attach(Activity activity) {
     }
 
-    public void setKeyId(View view, String keyId) {
+    void setKeyId(View view, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null) {
             id = view.getId();
@@ -41,7 +40,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
         view.setId(id);
     }
 
-    public void setViewProtocol(View view, ProtocolInfo protocolInfo) {
+    void setViewProtocol(View view, ProtocolInfo protocolInfo) {
         int id = view.getId();
         if (id == View.NO_ID) {
             id = Client.value().id().create();
@@ -69,11 +68,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
             }
         }
         if (impl == null) {
-            impl = Client.config().ui().getImpl(protocolInfo.name, protocolInfo.key);
-            if (impl == null)
-                impl = Client.config().ui().getImpl(protocolInfo.name, "default");
-            if (impl == null)
-                impl = Client.config().ui().getImpl(protocolInfo.name, null);
+            impl = ProtocolRegister.getProtocolImpl(protocolInfo.name);
         }
         if (impl != null) {
             try {
@@ -89,21 +84,21 @@ public class JsonLayoutFinder implements ActivitySubscribe {
         throw new IllegalArgumentException("没有找到合适的实现类来生成实例");
     }
 
-    public View findViewByKeyId(Activity activity, String keyId) {
+    View findViewByKeyId(Activity activity, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null)
             return null;
         return activity.findViewById(id);
     }
 
-    public View findViewByKeyId(View view, String keyId) {
+    View findViewByKeyId(View view, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null)
             return null;
         return view.findViewById(id);
     }
 
-    public <T extends ViewProtocol> T findProtocol(Activity activity, Class<T> protocol, String key) {
+    <T extends ViewProtocol> T findProtocol(Activity activity, Class<T> protocol, String key) {
         Integer id = protocolIds.get(protocol.getSimpleName() + "-" + key);
         if (id == null) {
             id = protocolIds.get(protocol.getSimpleName());
@@ -121,7 +116,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
         return null;
     }
 
-    public <T extends ViewProtocol> T findProtocol(View view, Class<T> protocol, String key) {
+    <T extends ViewProtocol> T findProtocol(View view, Class<T> protocol, String key) {
         Integer id = protocolIds.get(protocol.getSimpleName() + "-" + key);
         if (id == null) {
             id = protocolIds.get(protocol.getSimpleName());

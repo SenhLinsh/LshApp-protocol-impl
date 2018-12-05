@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.View;
 
 import com.linsh.protocol.Client;
-import com.linsh.protocol.impl.ui.view.entity.FuncInfo;
 
 import java.util.HashMap;
 import java.util.Map;

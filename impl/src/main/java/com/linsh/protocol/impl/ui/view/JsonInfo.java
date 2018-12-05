@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view.entity;
+package com.linsh.protocol.impl.ui.view;
 
 import org.json.JSONException;
 import org.json.JSONObject;

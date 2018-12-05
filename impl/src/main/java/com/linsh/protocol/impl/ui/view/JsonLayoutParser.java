@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view.entity;
+package com.linsh.protocol.impl.ui.view;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +46,7 @@ class JsonLayoutParser {
         String className = adaptName(name);
         try {
             Class<? extends View> viewClass = (Class<? extends View>) Class.forName(className);
-            Class<? extends ViewInfo> viewInfoClass = Build.getViewInfoClass(viewClass);
+            Class<? extends ViewInfo> viewInfoClass = ProtocolRegister.getViewInfoClass(viewClass);
             ViewInfo info = (ViewInfo) ClassUtils.newInstance(viewInfoClass);
             info.name = viewClass;
             return info;
@@ -98,7 +98,7 @@ class JsonLayoutParser {
             return null;
         String protocolName = protocolObj.optString("name");
         try {
-            ProtocolInfo info = (ProtocolInfo) ClassUtils.newInstance(Build.getProtocolInfo(protocolName));
+            ProtocolInfo info = (ProtocolInfo) ClassUtils.newInstance(ProtocolRegister.getProtocolInfo(protocolName));
             info.onDeserialize(object);
             return info;
         } catch (Exception e) {

@@ -32,6 +32,11 @@ public class LshFileManager implements FileManager {
     }
 
     @Override
+    public FileBuilder file(File file) {
+        return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH, file.getAbsolutePath());
+    }
+
+    @Override
     public FileBuilder path(String path) {
         return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH, path);
     }
