@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.linsh.protocol.Client;
 import com.linsh.protocol.activity.ActivitySubscribe;
+import com.linsh.protocol.config.FileConfig;
 import com.linsh.protocol.file.FileBuilder;
 import com.linsh.protocol.file.FileManager;
 import com.linsh.protocol.file.PermissionCallback;
@@ -24,6 +25,12 @@ import java.io.File;
  */
 public class LshFileManager implements FileManager {
 
+    private final FileConfig config;
+
+    public LshFileManager(FileConfig config) {
+        this.config = config;
+    }
+
     @Override
     public FileBuilder path(String path) {
         return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH, path);
@@ -39,7 +46,7 @@ public class LshFileManager implements FileManager {
     @Override
     public FileBuilder app(String filename) {
         return new FileBuilderImpl(FileBuilderImpl.TYPE_PATH,
-                Client.config().file().appDir() + filename);
+                config.appDir() + filename);
     }
 
     @Override

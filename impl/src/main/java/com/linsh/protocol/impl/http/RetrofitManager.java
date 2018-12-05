@@ -1,5 +1,6 @@
 package com.linsh.protocol.impl.http;
 
+import com.linsh.protocol.config.HttpConfig;
 import com.linsh.protocol.http.GetBuilder;
 import com.linsh.protocol.http.HttpManager;
 import com.linsh.protocol.http.PostBuilder;
@@ -33,17 +34,16 @@ public class RetrofitManager implements HttpManager {
     private final RequestBuilderFactory requestBuilderFactory;
     private final List<Converter.Factory> converterFactories;
 
-
-    public RetrofitManager(String baseUrl) {
+    public RetrofitManager(HttpConfig config) {
         this(new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(config.baseUrl())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(StringConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build());
     }
 
-    public RetrofitManager(Retrofit retrofit) {
+    private RetrofitManager(Retrofit retrofit) {
         this.retrofit = retrofit;
         this.callFactory = retrofit.callFactory();
         this.serviceFactory = new RetrofitServiceFactory(retrofit);

@@ -4,6 +4,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.linsh.protocol.config.ImageConfig;
 import com.linsh.protocol.image.ImageLoader;
 import com.linsh.protocol.image.ImageManager;
 
@@ -18,10 +19,23 @@ import java.io.File;
  * </pre>
  */
 public class GlideImageManager implements ImageManager {
+
+    private final RequestOptions defaultOptions;
+
+    public GlideImageManager(ImageConfig config) {
+        RequestOptions options = new RequestOptions();
+        if (config.placeholder() > 0)
+            options = options.placeholder(config.placeholder());
+        if (config.placeholder() > 0)
+            options = options.error(config.error());
+        this.defaultOptions = options;
+    }
+
     @Override
     public void load(int res, ImageView view) {
         Glide.with(view)
                 .load(res)
+                .apply(defaultOptions)
                 .into(view);
     }
 
@@ -29,6 +43,7 @@ public class GlideImageManager implements ImageManager {
     public void load(File file, ImageView view) {
         Glide.with(view)
                 .load(file)
+                .apply(defaultOptions)
                 .into(view);
     }
 
@@ -36,6 +51,7 @@ public class GlideImageManager implements ImageManager {
     public void load(String url, ImageView view) {
         Glide.with(view)
                 .load(url)
+                .apply(defaultOptions)
                 .into(view);
     }
 
@@ -43,7 +59,7 @@ public class GlideImageManager implements ImageManager {
     public void load(String url, ImageView view, int placeholder) {
         Glide.with(view)
                 .load(url)
-                .apply(new RequestOptions().placeholder(placeholder))
+                .apply(defaultOptions.clone().placeholder(placeholder))
                 .into(view);
     }
 

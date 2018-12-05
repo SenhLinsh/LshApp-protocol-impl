@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.linsh.protocol.Client;
+import com.linsh.protocol.config.UIConfig;
 import com.linsh.protocol.impl.ui.dialog.DialogManagerImpl;
 import com.linsh.protocol.impl.ui.layout.LayoutManagerImpl;
 import com.linsh.protocol.impl.ui.popup.PopupWindowManagerImpl;
@@ -28,6 +29,10 @@ import com.linsh.protocol.ui.window.WindowManager;
  * </pre>
  */
 public class LshUIManager implements UIManager {
+
+    public LshUIManager(UIConfig config) {
+    }
+
     @Override
     public DialogManager dialog(Activity activity) {
         return Client.activity().target(activity)

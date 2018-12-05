@@ -1,5 +1,6 @@
 package com.linsh.protocol.impl.thread;
 
+import com.linsh.protocol.config.ThreadConfig;
 import com.linsh.protocol.thread.ThreadManager;
 import com.linsh.utilseverywhere.HandlerUtils;
 
@@ -14,6 +15,10 @@ import io.reactivex.schedulers.Schedulers;
  * </pre>
  */
 public class LshThreadManager implements ThreadManager {
+
+    public LshThreadManager(ThreadConfig config) {
+    }
+
     @Override
     public void ui(Runnable task) {
         HandlerUtils.postRunnable(task);

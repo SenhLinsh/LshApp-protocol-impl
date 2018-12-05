@@ -1,8 +1,8 @@
 package com.linsh.protocol.impl.db;
 
-import com.linsh.protocol.Client;
 import com.linsh.protocol.Result;
 import com.linsh.protocol.Task;
+import com.linsh.protocol.config.DbConfig;
 import com.linsh.protocol.db.DbManager;
 import com.linsh.protocol.db.QueryBuilder;
 import com.linsh.protocol.impl.ResultImpl;
@@ -25,6 +25,12 @@ import io.realm.RealmResults;
  * </pre>
  */
 public class RealmDbManager implements DbManager {
+
+    private final DbConfig config;
+
+    public RealmDbManager(DbConfig config) {
+        this.config = config;
+    }
 
     @Override
     public <T> QueryBuilder<T> query(Class<T> clazz) {
@@ -79,7 +85,7 @@ public class RealmDbManager implements DbManager {
 
     @Override
     public <T> Task<Result> deleteById(final Class<T> clazz, final Object value) {
-        return deleteByKey(clazz, Client.config().db().fieldNameForId(), value);
+        return deleteByKey(clazz, config.fieldNameForId(), value);
     }
 
     @Override
