@@ -2,6 +2,7 @@ package com.linsh.protocol.impl.ui.popup;
 
 import android.content.Context;
 import android.os.Build;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.PopupWindow;
 
@@ -36,7 +37,7 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
 
     @Override
     public PopupWindowManager setView(int layout) {
-        viewHelper = Client.ui().view().inflate(layout, context);
+        viewHelper = Client.ui().view().view(LayoutInflater.from(context).inflate(layout, null));
         window.setContentView(viewHelper.getView());
         return this;
     }

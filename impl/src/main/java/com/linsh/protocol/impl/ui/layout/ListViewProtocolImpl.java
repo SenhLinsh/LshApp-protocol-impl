@@ -31,6 +31,7 @@ import io.reactivex.functions.BiFunction;
  */
 class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListener, View.OnLongClickListener {
 
+    private final Context context;
     private final RecyclerView recyclerView;
 
     private List<T> listData;
@@ -51,6 +52,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     }
 
     public ListViewProtocolImpl(RecyclerView recyclerView) {
+        this.context = recyclerView.getContext();
         this.recyclerView = recyclerView;
         this.recyclerView.setAdapter(new AdapterImpl());
     }
@@ -252,19 +254,19 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
         public ViewHolderImpl onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType < headers.size()) {
                 ItemInfo<T> itemInfo = headers.get(viewType);
-                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                ViewProtocol protocol = Client.ui().view().getProtocol(recyclerView, itemInfo.protocol, false);
                 return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             viewType -= headers.size();
             if (viewType < items.size()) {
-                ItemInfo itemInfo = items.get(viewType);
-                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                ItemInfo<T> itemInfo = items.get(viewType);
+                ViewProtocol protocol = Client.ui().view().getProtocol(recyclerView, itemInfo.protocol, false);
                 return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             viewType -= items.size();
             if (viewType < footers.size()) {
-                ItemInfo itemInfo = footers.get(viewType);
-                ViewProtocol protocol = Client.ui().view().getProtocol(itemInfo.protocol);
+                ItemInfo<T> itemInfo = footers.get(viewType);
+                ViewProtocol protocol = Client.ui().view().getProtocol(recyclerView, itemInfo.protocol, false);
                 return new ViewHolderImpl(protocol, itemInfo.listener, ListViewProtocolImpl.this);
             }
             throw new IllegalArgumentException("viewType 无法对上");

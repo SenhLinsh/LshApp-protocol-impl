@@ -30,8 +30,6 @@ public class ResultImpl implements Result {
         this.throwable = throwable;
     }
 
-
-
     @Override
     public int getCode() {
         return code;

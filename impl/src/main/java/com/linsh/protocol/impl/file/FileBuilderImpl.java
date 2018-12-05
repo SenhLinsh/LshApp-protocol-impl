@@ -9,6 +9,7 @@ import com.linsh.protocol.file.FileBuilder;
 import com.linsh.protocol.file.FileReader;
 import com.linsh.protocol.file.FileWriter;
 import com.linsh.utilseverywhere.ContextUtils;
+import com.linsh.utilseverywhere.FileUtils;
 import com.linsh.utilseverywhere.UEPermission;
 
 import java.io.File;
@@ -31,6 +32,7 @@ class FileBuilderImpl implements FileBuilder {
     private final int dirType;
     private boolean external;
     private boolean force;
+    private File tempFile;
 
     public FileBuilderImpl(String path) {
         this.filename = path;
@@ -44,7 +46,7 @@ class FileBuilderImpl implements FileBuilder {
 
     @Override
     public FileBuilder parent(String name) {
-        if (dirType == 0) {
+        if (dirType == TYPE_PATH) {
             int index = filename.lastIndexOf("/");
             if (index > 0) {
                 filename = filename.substring(0, index) + "/" + name + filename.substring(index);
@@ -63,41 +65,76 @@ class FileBuilderImpl implements FileBuilder {
     }
 
     @Override
+    public FileBuilder child(String name) {
+        tempFile = null;
+        if (filename.endsWith("/")) {
+            filename += name;
+        } else {
+            filename += "/" + name;
+        }
+        return this;
+    }
+
+    @Override
     public FileBuilder external(boolean external) {
-        this.external = external;
+        if (this.external != external) {
+            this.external = external;
+            tempFile = null;
+        }
         return this;
     }
 
     @Override
     public FileBuilder external(boolean external, boolean force) {
-        this.external = external;
-        this.force = force;
+        if (this.external != external || this.force != force) {
+            this.external = external;
+            this.force = force;
+            tempFile = null;
+        }
+        return this;
+    }
+
+    @Override
+    public FileBuilder makeDirs() {
+        FileUtils.makeDirs(file());
+        return this;
+    }
+
+    @Override
+    public FileBuilder makeParentDirs() {
+        FileUtils.makeParentDirs(file());
         return this;
     }
 
     @Override
     public File file() {
-        File file = null;
+        if (tempFile != null)
+            return tempFile;
         switch (dirType) {
             case TYPE_PATH:
-                file = new File(filename);
+                tempFile = new File(filename);
                 break;
             case TYPE_DATA:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    file = new File(ContextUtils.get().getDataDir(), filename);
+                    tempFile = new File(ContextUtils.get().getDataDir(), filename);
                 } else {
-                    file = new File(ContextUtils.get().getDir("data", Context.MODE_PRIVATE), filename);
+                    tempFile = new File(ContextUtils.get().getDir("data", Context.MODE_PRIVATE), filename);
                 }
                 break;
             case TYPE_CACHE:
                 if ((force && external) || (!force && UEPermission.Storage.check())) {
-                    file = new File(ContextUtils.getExternalCacheDir(), filename);
+                    tempFile = new File(ContextUtils.getExternalCacheDir(), filename);
                 } else {
-                    file = new File(ContextUtils.getCacheDir(), filename);
+                    tempFile = new File(ContextUtils.getCacheDir(), filename);
                 }
                 break;
         }
-        return file;
+        return tempFile;
+    }
+
+    @Override
+    public File[] listFiles() {
+        return file().listFiles();
     }
 
     @Override
@@ -112,11 +149,11 @@ class FileBuilderImpl implements FileBuilder {
 
     @Override
     public boolean delete() {
-        return false;
+        return FileUtils.deleteFile(file());
     }
 
     @Override
     public void deleteAll(Callback<File> callback) {
-
+        // TODO: 2018/12/5
     }
 }
