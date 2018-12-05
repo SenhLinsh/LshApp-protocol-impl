@@ -11,7 +11,7 @@ android {
         minSdkVersion versions.minSdkVersion
         targetSdkVersion versions.targetSdkVersion
         versionCode 1
-        versionName "0.8.0"
+        versionName "0.9.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -71,6 +71,6 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
 
     implementation 'com.github.SenhLinsh:LshViews:1.0.1'
-    implementation 'com.github.SenhLinsh:LshApp-protocol:0.8'
+    implementation 'com.github.SenhLinsh:LshApp-protocol:0.9'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 }

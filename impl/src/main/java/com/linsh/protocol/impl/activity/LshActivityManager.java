@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.linsh.protocol.activity.ActivityDelegate;
 import com.linsh.protocol.activity.ActivityManager;
+import com.linsh.protocol.activity.IDelegateActivity;
 import com.linsh.protocol.activity.IntentDelegate;
 
 /**
@@ -18,7 +19,14 @@ import com.linsh.protocol.activity.IntentDelegate;
 public class LshActivityManager implements ActivityManager {
     @Override
     public ActivityDelegate target(Activity activity) {
-        return new ActivityDelegateImpl(activity);
+        if (!(activity instanceof IDelegateActivity))
+            throw new IllegalArgumentException("无法使用未实现 " + ActivityDelegate.class.getName() + " 的 Activity");
+        ActivityDelegate delegate = ((IDelegateActivity) activity).getDelegate();
+        if (delegate == null) {
+            delegate = new ActivityDelegateImpl(activity);
+            ((IDelegateActivity) activity).delegate(delegate);
+        }
+        return delegate;
     }
 
     @Override

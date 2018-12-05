@@ -127,6 +127,18 @@ public class ViewManagerImpl implements ViewManager {
     }
 
     @Override
+    public View findViewById(Activity activity, String id) {
+        JsonLayoutFinder finder = Client.activity().target(activity).useSubscriber(JsonLayoutFinder.class);
+        return finder.findViewByKeyId(activity, id);
+    }
+
+    @Override
+    public View findViewById(View view, String id) {
+        JsonLayoutFinder finder = Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class);
+        return finder.findViewByKeyId(view, id);
+    }
+
+    @Override
     public <V extends View> ViewProtocol<V> view(V view) {
         return new ViewProtocolImpl<>(view);
     }

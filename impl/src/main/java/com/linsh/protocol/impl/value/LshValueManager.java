@@ -14,11 +14,11 @@ import com.linsh.protocol.value.ValueManager;
  *    desc   :
  * </pre>
  */
-public class LshValueManagerImpl implements ValueManager {
+public class LshValueManager implements ValueManager {
 
     private final ValueConfig config;
 
-    public LshValueManagerImpl(ValueConfig config) {
+    public LshValueManager(ValueConfig config) {
         this.config = config;
     }
 

@@ -30,7 +30,12 @@ import com.linsh.protocol.ui.window.WindowManager;
  */
 public class LshUIManager implements UIManager {
 
+    private final ToastManager toastManager;
+    private final ViewManager viewManager;
+
     public LshUIManager(UIConfig config) {
+        toastManager = new ToastManagerImpl();
+        viewManager = new ViewManagerImpl();
     }
 
     @Override
@@ -51,12 +56,12 @@ public class LshUIManager implements UIManager {
 
     @Override
     public ToastManager toast() {
-        return new ToastManagerImpl();
+        return toastManager;
     }
 
     @Override
     public ViewManager view() {
-        return new ViewManagerImpl();
+        return viewManager;
     }
 
     @Override

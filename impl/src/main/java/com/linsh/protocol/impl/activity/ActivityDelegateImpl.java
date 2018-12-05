@@ -21,12 +21,10 @@ class ActivityDelegateImpl implements ActivityDelegate {
 
     private final IObservableActivity observableActivity;
 
-    public ActivityDelegateImpl(Activity activity) {
-        if (activity instanceof IObservableActivity) {
-            observableActivity = (IObservableActivity) activity;
-            return;
-        }
-        throw new IllegalArgumentException("无法使用未实现 " + IObservableActivity.class.getName() + " 的 Activity");
+    ActivityDelegateImpl(Activity activity) {
+        if (!(activity instanceof IObservableActivity))
+            throw new IllegalArgumentException("无法使用未实现 " + IObservableActivity.class.getName() + " 的 Activity");
+        observableActivity = (IObservableActivity) activity;
     }
 
     @Override
@@ -74,7 +72,12 @@ class ActivityDelegateImpl implements ActivityDelegate {
     }
 
     @Override
-    public <V extends ViewProtocol> V viewProtocol(Class<V> protocol) {
+    public <V extends ViewProtocol> V findViewProtocol(Class<V> protocol) {
         return Client.ui().view().findProtocol((Activity) observableActivity, protocol);
+    }
+
+    @Override
+    public <V extends ViewProtocol> V findViewProtocol(Class<V> protocol, String key) {
+        return Client.ui().view().findProtocol((Activity) observableActivity, protocol, key);
     }
 }

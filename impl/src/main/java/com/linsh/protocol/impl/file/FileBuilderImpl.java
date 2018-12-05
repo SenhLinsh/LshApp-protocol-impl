@@ -3,16 +3,20 @@ package com.linsh.protocol.impl.file;
 import android.content.Context;
 import android.os.Build;
 
-import com.linsh.protocol.Callback;
 import com.linsh.protocol.Client;
+import com.linsh.protocol.Result;
+import com.linsh.protocol.Task;
 import com.linsh.protocol.file.FileBuilder;
 import com.linsh.protocol.file.FileReader;
 import com.linsh.protocol.file.FileWriter;
+import com.linsh.protocol.impl.ResultImpl;
+import com.linsh.protocol.impl.TaskImpl;
 import com.linsh.utilseverywhere.ContextUtils;
 import com.linsh.utilseverywhere.FileUtils;
 import com.linsh.utilseverywhere.UEPermission;
 
 import java.io.File;
+import java.util.concurrent.Callable;
 
 /**
  * <pre>
@@ -153,7 +157,14 @@ class FileBuilderImpl implements FileBuilder {
     }
 
     @Override
-    public void deleteAll(Callback<File> callback) {
-        // TODO: 2018/12/5
+    public Task<Result> deleteAll() {
+        return new TaskImpl<>(new Callable<Result>() {
+            @Override
+            public Result call() throws Exception {
+                boolean b = FileUtils.deleteFile(file());
+                if (b) return new ResultImpl();
+                return new ResultImpl(1, "删除失败");
+            }
+        });
     }
 }
