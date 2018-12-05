@@ -1,13 +1,10 @@
 package com.linsh.protocol.impl.log.impl;
 
-import android.Manifest;
-
 import com.linsh.protocol.Client;
+import com.linsh.protocol.config.LogConfig;
 import com.linsh.protocol.log.LogPrinter;
-import com.linsh.utilseverywhere.ContextUtils;
 import com.linsh.utilseverywhere.DateUtils;
 import com.linsh.utilseverywhere.FileUtils;
-import com.linsh.utilseverywhere.PermissionUtils;
 
 import java.io.File;
 import java.util.Date;
@@ -24,16 +21,12 @@ import io.reactivex.schedulers.Schedulers;
  */
 class LshLogPrinter extends LshLogger implements LogPrinter {
 
-    private static File logDir;
-    private static File logFile;
-    private static Date refreshDate = new Date();
+    private File logDir;
+    private File logFile;
+    private Date refreshDate = new Date();
 
-    static {
-        if (PermissionUtils.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            logDir = new File(ContextUtils.getExternalCacheDir(), "log");
-        } else {
-            logDir = new File(ContextUtils.getCacheDir(), "log");
-        }
+    public LshLogPrinter(LogConfig config) {
+        logDir = config.cacheDir();
         logFile = new File(logDir, DateUtils.getCurDateStr());
         // 清楚无效文件
         Schedulers.io().createWorker().schedule(new Runnable() {
@@ -69,7 +62,7 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
      * <p>
      * 每天对应一个日志文件, 如果到了第二天, 则需要更新文件名
      */
-    private static void refreshFileTime() {
+    private void refreshFileTime() {
         Date date = new Date();
         if (refreshDate.getYear() != date.getYear()
                 || refreshDate.getMonth() != date.getMonth()
@@ -82,7 +75,7 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
     /**
      * 清除过期 & 无效日志文件
      */
-    private static void clearExpiredLog() {
+    private void clearExpiredLog() {
         File[] files = logDir.listFiles();
         if (files != null) {
             for (File file : files) {

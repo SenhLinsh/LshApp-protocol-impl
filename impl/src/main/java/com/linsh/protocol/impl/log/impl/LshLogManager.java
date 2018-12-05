@@ -3,6 +3,7 @@ package com.linsh.protocol.impl.log.impl;
 
 import android.util.Log;
 
+import com.linsh.protocol.config.LogConfig;
 import com.linsh.protocol.log.LogManager;
 import com.linsh.protocol.log.LogPrinter;
 import com.linsh.protocol.log.LogTracer;
@@ -25,11 +26,11 @@ public class LshLogManager implements LogManager {
     private final LogPrinter logPrinter;
     private final Logger logger;
 
-    public LshLogManager() {
-        this(new LshLogTracer(), new LshLogPrinter(), new LshLogger());
+    public LshLogManager(LogConfig config) {
+        this(new LshLogTracer(), new LshLogPrinter(config), new LshLogger());
     }
 
-    public LshLogManager(LogTracer logTracer, LogPrinter logPrinter, Logger logger) {
+    private LshLogManager(LogTracer logTracer, LogPrinter logPrinter, Logger logger) {
         this.logTracer = logTracer;
         this.logPrinter = logPrinter;
         this.logger = logger;
