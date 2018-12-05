@@ -1,6 +1,7 @@
-package com.linsh.protocol.impl.ui.view;
+package com.linsh.protocol.impl.ui.view.entity;
 
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.linsh.utilseverywhere.ClassUtils;
 import com.linsh.utilseverywhere.UnitConverseUtils;
 
 import org.json.JSONArray;
@@ -31,51 +33,87 @@ class JsonLayoutParser {
 
     static ViewInfo parse(String json) {
         try {
-            return parse(new JSONObject(json));
+            return parse(new JSONObject(json), null);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static ViewInfo parse(JSONObject object) throws JSONException {
-        ViewInfo info = new ViewInfo();
-        info.name = getName(object);
-        info.id = object.optString("id");
-        info.maxWidth = getSize(object, "maxWidth", info.maxWidth);
-        info.maxHeight = getSize(object, "maxHeight", info.maxHeight);
-        info.minWidth = getSize(object, "minWidth", info.minWidth);
-        info.minHeight = getSize(object, "minHeight", info.minHeight);
-        info.padding = getSize(object, "padding", info.padding);
-        info.paddings = getSizeArray(object, "paddings", 0);
-        info.background = getColor(object, "background");
-        info.elevation = getSize(object, "elevation", info.elevation);
-        info.scaleX = (float) object.optDouble("scaleX", info.scaleX);
-        info.scaleY = (float) object.optDouble("scaleY", info.scaleY);
-        info.visibility = getVisibility(object);
-        info.gravity = getGravity(object, "gravity", info.gravity);
-        info.orientation = getOrientation(object, "orientation", info.orientation);
-        info.scaleType = getScaleType(object, "scaleType");
-        info.src = object.optString("src");
-        info.textSize = getSize(object, "textSize", info.textSize);
-        info.textColor = getColor(object, "textColor");
-        info.text = object.optString("text");
-        info.hint = object.optString("hint");
-        info.width = getSize(object, "width", info.width);
-        info.height = getSize(object, "height", info.height);
-        info.margin = getSize(object, "margin", info.margin);
-        info.margins = getSizeArray(object, "margins", 0);
-        info.weight = object.optInt("weight", info.weight);
-        info.layout_gravity = getGravity(object, "layout_gravity", info.layout_gravity);
-        info.children = getChildren(object);
-        info.protocol = getProtocol(object);
+    private static ViewInfo parse(JSONObject object, ViewInfo parent) throws JSONException {
+        ViewInfo info = getViewInfo(object.optString("name"));
+        info.onDeserialize(object, parent);
         return info;
     }
 
-    private static ViewProtocolInfo getProtocol(JSONObject object) throws JSONException {
+    @NonNull
+    private static ViewInfo getViewInfo(String name) {
+        String className = adaptName(name);
+        try {
+            ViewInfo info = null;
+            Class<? extends View> viewClass = (Class<? extends View>) Class.forName(className);
+            Class clazz = viewClass;
+            while (clazz != null) {
+                Class<? extends ViewInfo> viewInfoClass = Build.VIEW_INFO_BUILDING.get(clazz);
+                if (viewInfoClass != null) {
+                    try {
+                        info = (ViewInfo) ClassUtils.newInstance(viewInfoClass);
+                        break;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                clazz = clazz.getSuperclass();
+            }
+            if (info == null) {
+                throw new IllegalArgumentException("无法匹配到指定的 ViewInfo: " + viewClass);
+            }
+            info.name = viewClass;
+            return info;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("无法解析 View 的类: " + className);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("ViewInfo 指定的类名必须继承自 " + View.class.getName());
+        }
+    }
+
+    private static String adaptName(String name) {
+        if (name == null)
+            return null;
+        if (name.contains("."))
+            return name;
+        switch (name) {
+            case "View":
+                return View.class.getName();
+            case "RecyclerView":
+                return RecyclerView.class.getName();
+        }
+        return "android.widget." + name;
+    }
+
+    static ViewGroupInfo.LayoutParamsInfo getLayoutParamsInfo(JSONObject object, String fieldName, ViewInfo parent) throws JSONException {
+        ViewGroupInfo.LayoutParamsInfo layoutParamsInfo = null;
+        if (parent instanceof ViewGroupInfo) {
+            if (parent instanceof LinearLayoutInfo) {
+                layoutParamsInfo = new LinearLayoutInfo.LayoutParamsInfo();
+            }
+        }
+        if (layoutParamsInfo == null) {
+            layoutParamsInfo = new ViewGroupInfo.LayoutParamsInfo();
+        }
+        JSONObject obj = object.optJSONObject(fieldName);
+        if (obj != null) {
+            layoutParamsInfo.onDeserialize(obj);
+        } else {
+            layoutParamsInfo.onDeserialize(object);
+        }
+        return layoutParamsInfo;
+    }
+
+    static ProtocolInfo getProtocol(JSONObject object) throws JSONException {
         JSONObject protocolObj = object.optJSONObject("protocol");
         if (protocolObj == null)
             return null;
-        ViewProtocolInfo protocol = new ViewProtocolInfo();
+        ProtocolInfo protocol = new ProtocolInfo();
         protocol.name = protocolObj.optString("name");
         protocol.key = protocolObj.optString("key");
         JSONObject funcsObj = protocolObj.optJSONObject("funcs");
@@ -95,19 +133,18 @@ class JsonLayoutParser {
         return protocol;
     }
 
-    private static List<ViewInfo> getChildren(JSONObject object) throws JSONException {
+    static List<ViewInfo> getChildren(JSONObject object, ViewInfo parent) throws JSONException {
         JSONArray array = object.optJSONArray("children");
         if (array == null)
             return null;
         List<ViewInfo> res = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
-            res.add(parse(array.optJSONObject(i)));
+            res.add(parse(array.optJSONObject(i), parent));
         }
         return res;
     }
 
-    private static ImageView.ScaleType getScaleType(JSONObject object, String fieldName) {
-        Object value = object.opt(fieldName);
+    static ImageView.ScaleType getScaleType(Object value) {
         if (value == null)
             return null;
         if (value instanceof String) {
@@ -145,11 +182,10 @@ class JsonLayoutParser {
                     return ImageView.ScaleType.MATRIX;
             }
         }
-        throw new IllegalArgumentException("无法识别属性值 " + fieldName + ": " + value);
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 ImageView.ScaleType");
     }
 
-    private static int getOrientation(JSONObject object, String fieldName, int defaultValue) {
-        Object value = object.opt(fieldName);
+    static int getOrientation(Object value, int defaultValue) {
         if (value == null)
             return defaultValue;
         if (value instanceof Integer)
@@ -164,11 +200,10 @@ class JsonLayoutParser {
                     return LinearLayout.VERTICAL;
             }
         }
-        throw new IllegalArgumentException("无法识别属性值 " + fieldName + ": " + value);
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Orientation 值");
     }
 
-    private static int getGravity(JSONObject object, String fieldName, int defaultValue) {
-        Object value = object.opt(fieldName);
+    static int getGravity(Object value, int defaultValue) {
         if (value == null)
             return defaultValue;
         if (value instanceof Integer)
@@ -206,13 +241,12 @@ class JsonLayoutParser {
                     return Gravity.END;
             }
         }
-        throw new IllegalArgumentException("无法识别属性值 " + fieldName + ": " + value);
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Gravity 值");
     }
 
-    private static int getVisibility(JSONObject object) {
-        Object value = object.opt("visibility");
+    static int getVisibility(Object value, int defaultValue) {
         if (value == null)
-            return View.VISIBLE;
+            return defaultValue;
         if (value instanceof Integer)
             return (int) value;
         if (value instanceof String) {
@@ -228,35 +262,72 @@ class JsonLayoutParser {
                     return View.VISIBLE;
             }
         }
-        throw new IllegalArgumentException("无法识别属性值 visibility: " + value);
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Visibility 值");
     }
 
-    private static int getColor(JSONObject object, String fieldName) {
-        Object value = object.opt(fieldName);
+    static DrawableInfo getDrawableInfo(Object value) {
+        if (value == null) return null;
+        DrawableInfo info = null;
+        if (value instanceof Integer) {
+            info = new ColorDrawableInfo((Integer) value);
+        } else if (value instanceof String) {
+            if (((String) value).matches("(#|0x).+")) {
+                info = new ColorDrawableInfo(getColor((String) value));
+            } else if (((String) value).matches("color\\.[a-zA-Z_]+")) {
+                // TODO: 2018/12/5
+            } else if (((String) value).matches("drawable\\..+")) {
+                // TODO: 2018/12/5
+            }
+        } else if (value instanceof JSONObject) {
+            JSONObject object = (JSONObject) value;
+            value = object.opt("color");
+            if (value != null) {
+                return getDrawableInfo(value);
+            }
+            value = object.opt("path");
+            if (value != null) {
+                return new BitmapDrawableInfo(value.toString());
+            }
+            value = object.opt("state");
+            if (value != null) {
+                // TODO: 2018/12/5
+            }
+            value = object;
+        }
+        if (info != null)
+            return info;
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Drawable");
+    }
+
+    static int getColor(Object value, int defaultValue) {
         if (value == null)
-            return 0;
+            return defaultValue;
         if (value instanceof Integer)
             return (int) value;
         if (value instanceof String) {
-            String color = (String) value;
-            if (color.matches("(#|0x)*[0-9a-fA-F]{3,8}")) {
-                color = color.replaceAll("#|0x", "");
-                if (color.length() == 3) {
-                    return parseColor(color, 0, 1, 2, 3);
-                } else if (color.length() == 4) {
-                    return parseColor(color, 1, 2, 3, 4);
-                } else if (color.length() == 5) {
-                    return parseColor(color, 2, 3, 4, 5);
-                } else if (color.length() == 6) {
-                    return parseColor(color, 0, 2, 4, 6);
-                } else if (color.length() == 7) {
-                    return parseColor(color, 1, 3, 5, 7);
-                } else {
-                    return parseColor(color, 2, 4, 6, 8);
-                }
+            return getColor((String) value);
+        }
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Color 值");
+    }
+
+    private static int getColor(String color) {
+        if (color.matches("(#|0x)*[0-9a-fA-F]{3,8}")) {
+            color = color.replaceAll("#|0x", "");
+            if (color.length() == 3) {
+                return parseColor(color, 0, 1, 2, 3);
+            } else if (color.length() == 4) {
+                return parseColor(color, 1, 2, 3, 4);
+            } else if (color.length() == 5) {
+                return parseColor(color, 2, 3, 4, 5);
+            } else if (color.length() == 6) {
+                return parseColor(color, 0, 2, 4, 6);
+            } else if (color.length() == 7) {
+                return parseColor(color, 1, 3, 5, 7);
+            } else {
+                return parseColor(color, 2, 4, 6, 8);
             }
         }
-        throw new IllegalArgumentException("无法识别属性值 " + fieldName + ": " + value);
+        throw new IllegalArgumentException("无法将 " + color + " 解析成 Color 值");
     }
 
     private static int parseColor(String color, int ai, int ri, int gi, int bi) {
@@ -281,23 +352,18 @@ class JsonLayoutParser {
         return res;
     }
 
-    private static int[] getSizeArray(JSONObject object, String fieldName, int defaultValue) throws JSONException {
-        JSONArray jsonArray = object.optJSONArray(fieldName);
+    static int[] getSizeArray(JSONArray jsonArray, int defaultValue) throws JSONException {
         if (jsonArray == null)
             return null;
         int[] sizes = new int[jsonArray.length()];
         for (int i = 0; i < jsonArray.length(); i++) {
             Object value = jsonArray.get(i);
-            sizes[i] = getSize(value, fieldName, defaultValue);
+            sizes[i] = getSize(value, defaultValue);
         }
         return sizes;
     }
 
-    private static int getSize(JSONObject object, String fieldName, int defaultValue) {
-        return getSize(object.opt(fieldName), fieldName, defaultValue);
-    }
-
-    private static int getSize(Object value, String fieldName, int defaultValue) {
+    static int getSize(Object value, int defaultValue) {
         if (value == null)
             return defaultValue;
         if (value instanceof Integer)
@@ -330,21 +396,17 @@ class JsonLayoutParser {
             }
             throw new IllegalArgumentException("无法解析尺寸: " + size);
         }
-        throw new IllegalArgumentException("无法识别属性值 " + fieldName + ": " + value);
+        throw new IllegalArgumentException("无法将 " + value + " 解析成 Size 值");
     }
 
-    private static String getName(JSONObject object) {
-        String name = object.optString("name");
-        if (name == null)
-            return null;
-        if (name.contains("."))
-            return name;
-        switch (name) {
-            case "View":
-                return View.class.getName();
-            case "RecyclerView":
-                return RecyclerView.class.getName();
+    static int getShape(Object value, int defaultValue) {
+        if (value == null)
+            return defaultValue;
+        if (value instanceof Integer)
+            return (int) value;
+        if (value instanceof String) {
+            // TODO: 2018/12/5
         }
-        return "android.widget." + name;
+        return 0;
     }
 }

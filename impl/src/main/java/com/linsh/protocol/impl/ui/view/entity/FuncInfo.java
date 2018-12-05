@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view;
+package com.linsh.protocol.impl.ui.view.entity;
 
 /**
  * <pre>

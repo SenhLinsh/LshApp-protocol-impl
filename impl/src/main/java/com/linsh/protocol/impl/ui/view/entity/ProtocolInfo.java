@@ -1,4 +1,4 @@
-package com.linsh.protocol.impl.ui.view;
+package com.linsh.protocol.impl.ui.view.entity;
 
 import java.util.Map;
 
@@ -10,7 +10,7 @@ import java.util.Map;
  *    desc   :
  * </pre>
  */
-public class ViewProtocolInfo {
+public class ProtocolInfo {
     public String name;
     public String key;
     public Map<String, FuncInfo> funcs;

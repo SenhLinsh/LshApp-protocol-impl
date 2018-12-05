@@ -6,6 +6,7 @@ import android.view.View;
 import com.linsh.protocol.Client;
 import com.linsh.protocol.activity.ActivitySubscribe;
 import com.linsh.protocol.impl.R;
+import com.linsh.protocol.impl.ui.view.entity.ProtocolInfo;
 import com.linsh.protocol.ui.view.ViewProtocol;
 import com.linsh.utilseverywhere.ClassUtils;
 
@@ -21,27 +22,28 @@ import java.util.HashMap;
  */
 public class JsonLayoutFinder implements ActivitySubscribe {
 
-    private HashMap<String, Integer> keyIds;
-    private HashMap<String, Integer> protocolIds;
+    private HashMap<String, Integer> keyIds = new HashMap<>();
+    private HashMap<String, Integer> protocolIds = new HashMap<>();
 
     @Override
     public void attach(Activity activity) {
-        keyIds = new HashMap<>();
-        protocolIds = new HashMap<>();
     }
 
-    public void setKey(View view, String keyId) {
+    public void setKeyId(View view, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null) {
-            id = Client.value().id().create();
+            id = view.getId();
+            if (id == View.NO_ID) {
+                id = Client.value().id().create();
+            }
             keyIds.put(keyId, id);
         }
         view.setId(id);
     }
 
-    public void setViewProtocol(View view, ViewProtocolInfo protocolInfo) {
+    public void setViewProtocol(View view, ProtocolInfo protocolInfo) {
         int id = view.getId();
-        if (id <= 0) {
+        if (id == View.NO_ID) {
             id = Client.value().id().create();
             view.setId(id);
         }
@@ -53,7 +55,7 @@ public class JsonLayoutFinder implements ActivitySubscribe {
         view.setTag(R.id.tag_view_protocol, protocol);
     }
 
-    private ViewProtocol getProtocolInstance(View view, ViewProtocolInfo protocolInfo) {
+    private ViewProtocol getProtocolInstance(View view, ProtocolInfo protocolInfo) {
         if (protocolInfo.name.contains(".")) {
             try {
                 Class<?> protocolClass = ClassUtils.getClass(protocolInfo.name);
@@ -103,14 +105,14 @@ public class JsonLayoutFinder implements ActivitySubscribe {
         throw new IllegalArgumentException("没有找到合适的实现类来生成实例");
     }
 
-    public View findViewByKey(Activity activity, String keyId) {
+    public View findViewByKeyId(Activity activity, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null)
             return null;
         return activity.findViewById(id);
     }
 
-    public View findViewByKey(View view, String keyId) {
+    public View findViewByKeyId(View view, String keyId) {
         Integer id = keyIds.get(keyId);
         if (id == null)
             return null;

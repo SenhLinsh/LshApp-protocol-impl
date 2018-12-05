@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.linsh.protocol.Client;
+import com.linsh.protocol.impl.ui.view.entity.FuncInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class FuncViewProtocolImpl implements FuncViewProtocol {
                 View childView = views.get(funcInfo.id);
                 if (childView == null) {
                     JsonLayoutFinder finder = Client.activity().target((Activity) context).useSubscriber(JsonLayoutFinder.class);
-                    childView = finder.findViewByKey(this.view, funcInfo.id);
+                    childView = finder.findViewByKeyId(this.view, funcInfo.id);
                     views.put(funcInfo.id, childView);
                 }
                 return childView;
