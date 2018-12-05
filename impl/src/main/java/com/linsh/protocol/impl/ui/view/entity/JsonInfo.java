@@ -7,17 +7,12 @@ import org.json.JSONObject;
  * <pre>
  *    author : Senh Linsh
  *    github : https://github.com/SenhLinsh
- *    date   : 2018/12/02
+ *    date   : 2018/12/05
  *    desc   :
  * </pre>
  */
-public class ProtocolInfo extends JsonInfo {
-    public String name;
-    public String key;
+public class JsonInfo {
 
-    @Override
     protected void onDeserialize(JSONObject object) throws JSONException {
-        super.onDeserialize(object);
-        key = object.optString("key");
     }
 }

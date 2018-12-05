@@ -1,7 +1,6 @@
 package com.linsh.protocol.impl.ui.view.entity;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
@@ -17,8 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -39,40 +36,26 @@ class JsonLayoutParser {
         }
     }
 
-    private static ViewInfo parse(JSONObject object, ViewInfo parent) throws JSONException {
+    static ViewInfo parse(JSONObject object, ViewInfo parent) throws JSONException {
         ViewInfo info = getViewInfo(object.optString("name"));
         info.onDeserialize(object, parent);
         return info;
     }
 
-    @NonNull
     private static ViewInfo getViewInfo(String name) {
         String className = adaptName(name);
         try {
-            ViewInfo info = null;
             Class<? extends View> viewClass = (Class<? extends View>) Class.forName(className);
-            Class clazz = viewClass;
-            while (clazz != null) {
-                Class<? extends ViewInfo> viewInfoClass = Build.VIEW_INFO_BUILDING.get(clazz);
-                if (viewInfoClass != null) {
-                    try {
-                        info = (ViewInfo) ClassUtils.newInstance(viewInfoClass);
-                        break;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                clazz = clazz.getSuperclass();
-            }
-            if (info == null) {
-                throw new IllegalArgumentException("无法匹配到指定的 ViewInfo: " + viewClass);
-            }
+            Class<? extends ViewInfo> viewInfoClass = Build.getViewInfoClass(viewClass);
+            ViewInfo info = (ViewInfo) ClassUtils.newInstance(viewInfoClass);
             info.name = viewClass;
             return info;
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException("无法解析 View 的类: " + className);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("ViewInfo 指定的类名必须继承自 " + View.class.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -113,24 +96,14 @@ class JsonLayoutParser {
         JSONObject protocolObj = object.optJSONObject("protocol");
         if (protocolObj == null)
             return null;
-        ProtocolInfo protocol = new ProtocolInfo();
-        protocol.name = protocolObj.optString("name");
-        protocol.key = protocolObj.optString("key");
-        JSONObject funcsObj = protocolObj.optJSONObject("funcs");
-        if (funcsObj != null) {
-            protocol.funcs = new HashMap<>();
-            Iterator<String> keys = funcsObj.keys();
-            while (keys.hasNext()) {
-                String next = keys.next();
-                JSONObject funcObj = funcsObj.getJSONObject(next);
-                if (funcObj != null) {
-                    FuncInfo funcInfo = new FuncInfo();
-                    funcInfo.id = funcObj.optString("id");
-                    protocol.funcs.put(next, funcInfo);
-                }
-            }
+        String protocolName = protocolObj.optString("name");
+        try {
+            ProtocolInfo info = (ProtocolInfo) ClassUtils.newInstance(Build.getProtocolInfo(protocolName));
+            info.onDeserialize(object);
+            return info;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
         }
-        return protocol;
     }
 
     static List<ViewInfo> getChildren(JSONObject object, ViewInfo parent) throws JSONException {

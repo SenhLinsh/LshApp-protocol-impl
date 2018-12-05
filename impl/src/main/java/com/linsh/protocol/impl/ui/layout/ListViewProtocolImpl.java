@@ -47,8 +47,12 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     private OnItemLongClickListener<T> onItemLongClickListener;
 
     public ListViewProtocolImpl(Context context) {
-        recyclerView = Client.ui().view().view(new RecyclerView(context)).getView();
-        recyclerView.setAdapter(new AdapterImpl());
+        this(Client.ui().view().view(new RecyclerView(context)).getView());
+    }
+
+    public ListViewProtocolImpl(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+        this.recyclerView.setAdapter(new AdapterImpl());
     }
 
     @Override
@@ -85,19 +89,19 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     }
 
     @Override
-    public ListViewProtocolImpl<T> setData(List<T> data) {
+    public ListViewProtocol<T> setData(List<T> data) {
         listData = data;
         return this;
     }
 
     @Override
-    public ListViewProtocolImpl<T> setData(T[] data) {
+    public ListViewProtocol<T> setData(T[] data) {
         listData = Arrays.asList(data);
         return this;
     }
 
     @Override
-    public ListViewProtocolImpl<T> setSingleData(T data) {
+    public ListViewProtocol<T> setSingleData(T data) {
         singleData = data;
         return this;
     }
@@ -118,7 +122,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     }
 
     @Override
-    public ListViewProtocolImpl<T> setCounter(ItemCounter counter) {
+    public ListViewProtocol<T> setCounter(ItemCounter counter) {
         itemCounter = counter;
         return this;
     }

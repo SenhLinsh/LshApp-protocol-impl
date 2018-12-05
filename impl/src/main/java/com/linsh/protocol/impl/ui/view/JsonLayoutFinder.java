@@ -56,22 +56,8 @@ public class JsonLayoutFinder implements ActivitySubscribe {
     }
 
     private ViewProtocol getProtocolInstance(View view, ProtocolInfo protocolInfo) {
-        if (protocolInfo.name.contains(".")) {
-            try {
-                Class<?> protocolClass = ClassUtils.getClass(protocolInfo.name);
-                if (!protocolClass.isInterface()) {
-                    Object instance = ClassUtils.newInstance(protocolClass, new Class[]{View.class}, new Object[]{view});
-                    if (instance instanceof ViewProtocol) {
-                        if (instance instanceof FuncViewProtocol)
-                            ((FuncViewProtocol) instance).setFuncs(protocolInfo.funcs);
-                        return (ViewProtocol) instance;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         Class<? extends ViewProtocol> impl = null;
+        // 带 . 默认直接反射实例化
         if (protocolInfo.name.contains(".")) {
             try {
                 Class<?> protocolClass = ClassUtils.getClass(protocolInfo.name);
@@ -93,8 +79,6 @@ public class JsonLayoutFinder implements ActivitySubscribe {
             try {
                 Object instance = ClassUtils.newInstance(impl, new Class[]{View.class}, new Object[]{view});
                 if (instance instanceof ViewProtocol) {
-                    if (instance instanceof FuncViewProtocol)
-                        ((FuncViewProtocol) instance).setFuncs(protocolInfo.funcs);
                     return (ViewProtocol) instance;
                 }
             } catch (Exception e) {

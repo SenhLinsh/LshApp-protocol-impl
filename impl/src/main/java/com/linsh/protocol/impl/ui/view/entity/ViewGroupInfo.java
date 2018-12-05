@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +24,13 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
     @Override
     protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
         super.onDeserialize(object, parent);
-        children = JsonLayoutParser.getChildren(object, this);
+        JSONArray array = object.optJSONArray("children");
+        if (array != null) {
+            children = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                children.add(JsonLayoutParser.parse(array.optJSONObject(i), parent));
+            }
+        }
     }
 
     @Override
