@@ -22,6 +22,7 @@ import com.linsh.protocol.Client;
 import com.linsh.protocol.activity.ActivitySubscribe;
 import com.linsh.protocol.activity.IObservableActivity;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -110,14 +111,13 @@ public abstract class ObservableActivity extends AppCompatActivity implements IO
         }
         // 没有订阅该类, 则创建实例, 对该实例进行订阅
         try {
-            T callback = classOfSubscriber.newInstance();
+            Constructor<T> constructor = classOfSubscriber.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            T callback = constructor.newInstance();
             return subscribe(callback);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException("实例化 " + classOfSubscriber.getName() + " 失败");
         }
-        return null;
     }
 
     /**
