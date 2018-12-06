@@ -1,5 +1,6 @@
 package com.linsh.protocol.impl.ui.view;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -92,6 +93,7 @@ public class ProtocolRegister {
         VIEW_INFO_REGISTER.put(ImageView.class, ImageViewInfo.class);
         VIEW_INFO_REGISTER.put(ViewGroup.class, ViewGroupInfo.class);
         VIEW_INFO_REGISTER.put(LinearLayout.class, LinearLayoutInfo.class);
+        VIEW_INFO_REGISTER.put(RecyclerView.class, RecyclerViewInfo.class);
     }
 
     static Class<? extends ViewInfo> getViewInfoClass(Class<? extends View> viewClass) {
