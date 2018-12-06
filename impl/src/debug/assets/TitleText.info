@@ -1,0 +1,35 @@
+{
+	name: "LinearLayout",
+	width: "MP",
+	height: "MP",
+	orientation: "V",
+	gravity: "Center",
+	background: "#FFFF55FF",
+	padding: 20,
+
+	protocol: {
+		name: "TitleTextItemViewProtocol",
+		impl: "JsonIdTitleTextItemViewProtocol"
+	},
+
+	children: [
+		{
+			name: "TextView",
+			id: "tv_title",
+			text: "HelloWorld",
+			textSize: "30dp",
+			textColor: "#000",
+			layout_gravity: "center",
+			background: "#300F"
+		},
+		{
+			name: "TextView",
+			id: "tv_text",
+			text: "detail.....",
+			gravity: "C",
+			textColor: "#0F0",
+			margin: "10dp",
+			textSize: "15dp"
+		}
+	]
+}
