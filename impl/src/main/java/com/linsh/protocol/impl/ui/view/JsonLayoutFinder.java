@@ -58,7 +58,15 @@ class JsonLayoutFinder implements ActivitySubscribe {
         Class<? extends ViewProtocol> impl = null;
         // 带 . 默认直接反射实例化
         if (protocolInfo.impl != null) {
-            impl = protocolInfo.impl;
+            if (protocolInfo.impl.contains(".")) {
+                try {
+                    impl = (Class<? extends ViewProtocol>) Class.forName(protocolInfo.impl);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                impl = ProtocolRegister.getProtocolImpl(protocolInfo.impl);
+            }
         }
         if (impl != null) {
             try {

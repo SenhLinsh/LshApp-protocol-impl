@@ -1,9 +1,11 @@
 package com.linsh.protocol.impl.ui.view;
 
+import android.graphics.drawable.ColorDrawable;
 import android.widget.ImageView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.linsh.protocol.Client;
 
 /**
  * <pre>
@@ -19,16 +21,16 @@ public class ImageViewInfo<T extends ImageView> extends ViewInfo<T> {
     public int maxHeight = -1;
 
     public ImageView.ScaleType scaleType;
-    public DrawableInfo src;
+    public Object src;
 
     @Override
-    protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
-        super.onDeserialize(object, parent);
-        maxWidth = JsonLayoutParser.getSize(object.opt("maxWidth"), maxWidth);
-        maxHeight = JsonLayoutParser.getSize(object.opt("maxHeight"), maxHeight);
+    public void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
+        super.onDeserialize(jsonObject, context, parent);
+        maxWidth = JsonLayoutParser.getSize(jsonObject.get("maxWidth"), maxWidth);
+        maxHeight = JsonLayoutParser.getSize(jsonObject.get("maxHeight"), maxHeight);
 
-        scaleType = JsonLayoutParser.getScaleType(object.opt("scaleType"));
-        src = JsonLayoutParser.getDrawableInfo(object.opt("src"));
+        scaleType = JsonLayoutParser.getScaleType(jsonObject.get("scaleType"));
+        src = JsonLayoutParser.getBackground(jsonObject.get("src"), context);
     }
 
     @Override
@@ -42,7 +44,13 @@ public class ImageViewInfo<T extends ImageView> extends ViewInfo<T> {
         if (scaleType != null)
             view.setScaleType(scaleType);
         if (src != null) {
-            // TODO: 2018/12/5
+            if (src instanceof Integer) {
+                view.setImageDrawable(new ColorDrawable((int) src));
+            } else if (src instanceof String) {
+                Client.image().load((String) background, view);
+            } else if (background instanceof DrawableInfo) {
+                ((DrawableInfo) background).setImage(view);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import com.linsh.protocol.ui.view.ViewManager;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 
 /**
  * <pre>
@@ -75,6 +76,24 @@ public class ViewManagerImpl implements ViewManager {
             dir = new File(Client.config().ui().commonResDir(), "protocol/" + protocol.getSimpleName());
             v = loadProtocolFromFile(context, dir, protocol, key, parent);
         }
+        if (v == null) {
+            Class<? extends ViewProtocol> protocolImpl = ProtocolRegister.findProtocolImplWithDefaulLayout(protocol);
+            if (protocolImpl != null) {
+                Constructor<? extends ViewProtocol> constructor;
+                try {
+                    constructor = protocolImpl.getDeclaredConstructor(Context.class);
+                    constructor.setAccessible(true);
+                    v = (V) constructor.newInstance(context);
+                } catch (NoSuchMethodException e) {
+                    throw new RuntimeException("无法实例化带默认布局的 ProtocolImpl, 请确认该类是否存在接受 Context 的构造器: " + protocolImpl.getName(), e);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        if (v == null)
+            throw new IllegalArgumentException("没有找到 " + protocol.getName() + " 的实现, 请确认是否已经在该 Protocol 的布局文件夹下放置布局文件, " +
+                    "或已经注册了自带默认布局的的 ProtocolImpl");
         return v;
     }
 

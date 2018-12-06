@@ -1,9 +1,12 @@
 package com.linsh.protocol.impl.view;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import com.linsh.protocol.Client;
+import com.linsh.protocol.impl.ui.view.JsonLayoutInflater;
+import com.linsh.utilseverywhere.ResourceUtils;
 
 /**
  * <pre>
@@ -18,6 +21,10 @@ public class JsonIdTitleTextItemViewProtocol implements TitleTextItemViewProtoco
     private final View view;
     private final TextView tvTitle;
     private final TextView tvText;
+
+    public JsonIdTitleTextItemViewProtocol(Context context) {
+        this(JsonLayoutInflater.from(context).inflate(ResourceUtils.getTextFromAssets("TitleTextItem.info"), null));
+    }
 
     public JsonIdTitleTextItemViewProtocol(View view) {
         this.view = view;

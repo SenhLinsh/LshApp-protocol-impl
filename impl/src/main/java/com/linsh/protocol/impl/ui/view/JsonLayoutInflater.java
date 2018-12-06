@@ -6,6 +6,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.GsonBuilder;
 import com.linsh.utilseverywhere.FileUtils;
 
 import java.io.File;
@@ -39,11 +40,15 @@ public class JsonLayoutInflater {
     }
 
     public View inflate(String json, ViewGroup parent) {
-        return inflate(JsonLayoutParser.parse(json), parent);
+        return inflate(json, parent, parent != null);
     }
 
     public View inflate(String json, ViewGroup parent, boolean attachToRoot) {
-        return inflate(JsonLayoutParser.parse(json), parent, attachToRoot);
+        ViewInfo viewInfo = new GsonBuilder()
+                .registerTypeAdapter(ViewInfo.class, new ViewInfoTypeAdapter())
+                .create()
+                .fromJson(json, ViewInfo.class);
+        return inflate(viewInfo, parent, attachToRoot);
     }
 
     public View inflate(ViewInfo info) {

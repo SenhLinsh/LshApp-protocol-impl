@@ -2,9 +2,10 @@ package com.linsh.protocol.impl.ui.view;
 
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,14 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
     public List<ViewInfo> children;
 
     @Override
-    protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
-        super.onDeserialize(object, parent);
-        JSONArray array = object.optJSONArray("children");
-        if (array != null) {
+    public void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
+        super.onDeserialize(jsonObject, context, parent);
+        JsonElement element = jsonObject.get("children");
+        if (element != null && element.isJsonArray()) {
             children = new ArrayList<>();
-            for (int i = 0; i < array.length(); i++) {
-                children.add(JsonLayoutParser.parse(array.optJSONObject(i), parent));
+            JsonArray jsonArray = element.getAsJsonArray();
+            for (JsonElement jsonElement : jsonArray) {
+                children.add(context.deserialize(jsonElement, ViewInfo.class));
             }
         }
     }
@@ -49,14 +51,15 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
         public int margin;
         public int[] margins;
 
-        protected void onDeserialize(JSONObject object) throws JSONException {
-            Object temp;
-            width = JsonLayoutParser.getSize((temp = object.opt("width")) != null ? temp : object.opt("layout_width"), width);
-            height = JsonLayoutParser.getSize((temp = object.opt("height")) != null ? temp : object.opt("layout_height"), height);
-            margin = JsonLayoutParser.getSize((temp = object.opt("margin")) != null ? temp : object.opt("layout_margin"), margin);
-            JSONArray jsonArray = object.optJSONArray("margins");
-            if (jsonArray == null) jsonArray = object.optJSONArray("layout_margins");
-            margins = JsonLayoutParser.getSizeArray(jsonArray, 0);
+        protected void onDeserialize(JsonObject jsonObject) {
+            JsonElement element = (element = jsonObject.get("width")) == null ? jsonObject.get("layout_width") : element;
+            width = JsonLayoutParser.getSize(element, width);
+            element = (element = jsonObject.get("height")) == null ? jsonObject.get("layout_height") : element;
+            height = JsonLayoutParser.getSize(element, height);
+            element = (element = jsonObject.get("margin")) == null ? jsonObject.get("layout_margin") : element;
+            margin = JsonLayoutParser.getSize(element, margin);
+            element = (element = jsonObject.get("margins")) == null ? jsonObject.get("layout_margins") : element;
+            margins = JsonLayoutParser.getSizeArray(element, 0);
         }
 
         protected T getLayoutParams() {

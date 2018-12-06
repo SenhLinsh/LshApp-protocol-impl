@@ -1,0 +1,12 @@
+{
+	name: "RecyclerView",
+	width: "MP",
+	height: "MP",
+	background: "#FFFF55FF",
+	padding: 20,
+
+	protocol: {
+		name: "ListViewProtocol",
+		impl: "JsonListViewProtocolImpl"
+	}
+}

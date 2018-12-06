@@ -2,6 +2,7 @@ package com.linsh.protocol.impl.ui.layout;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,9 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     public ListViewProtocolImpl(RecyclerView recyclerView) {
         this.context = recyclerView.getContext();
         this.recyclerView = recyclerView;
-        this.recyclerView.setAdapter(new AdapterImpl());
+        if (recyclerView.getLayoutManager() == null)
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(new AdapterImpl());
     }
 
     @Override

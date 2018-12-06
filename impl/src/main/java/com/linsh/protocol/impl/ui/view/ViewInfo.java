@@ -1,17 +1,15 @@
 package com.linsh.protocol.impl.ui.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
 import com.linsh.protocol.Client;
 import com.linsh.utilseverywhere.ClassUtils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * <pre>
@@ -33,7 +31,8 @@ public class ViewInfo<T extends View> {
     public int padding;
     public int[] paddings;
 
-    public DrawableInfo background;
+    // int(color) & String(url|path) & DrawableInfo(setBackground)
+    public Object background;
     public int elevation;
     public float scaleX = 1;
     public float scaleY = 1;
@@ -41,22 +40,23 @@ public class ViewInfo<T extends View> {
 
     public ProtocolInfo protocol;
 
-    protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
-        id = object.optString("id");
-        layoutParams = JsonLayoutParser.getLayoutParamsInfo(object, "layoutParams", parent);
+    protected void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
+        id = JsonObjectUtils.getString(jsonObject.get("id"));
 
-        minWidth = JsonLayoutParser.getSize(object.opt("minWidth"), minWidth);
-        minHeight = JsonLayoutParser.getSize(object.opt("minHeight"), minHeight);
-        padding = JsonLayoutParser.getSize(object.opt("padding"), padding);
-        paddings = JsonLayoutParser.getSizeArray(object.optJSONArray("paddings"), 0);
+        layoutParams = JsonLayoutParser.getLayoutParamsInfo(jsonObject, "layoutParams", parent);
 
-        background = JsonLayoutParser.getDrawableInfo(object.opt("background"));
-        elevation = JsonLayoutParser.getSize(object.opt("elevation"), elevation);
-        scaleX = (float) object.optDouble("scaleX", scaleX);
-        scaleY = (float) object.optDouble("scaleY", scaleY);
-        visibility = JsonLayoutParser.getVisibility(object.opt("visibility"), visibility);
+        minWidth = JsonLayoutParser.getSize(jsonObject.get("minWidth"), minWidth);
+        minHeight = JsonLayoutParser.getSize(jsonObject.get("minHeight"), minHeight);
+        padding = JsonLayoutParser.getSize(jsonObject.get("padding"), padding);
+        paddings = JsonLayoutParser.getSizeArray(jsonObject.get("paddings"), padding);
 
-        protocol = JsonLayoutParser.getProtocol(object);
+        background = JsonLayoutParser.getBackground(jsonObject.get("background"), context);
+        elevation = JsonLayoutParser.getSize(jsonObject.get("elevation"), elevation);
+        scaleX = JsonObjectUtils.getFloat(jsonObject.get("scaleX"), scaleX);
+        scaleY = JsonObjectUtils.getFloat(jsonObject.get("scaleY"), scaleY);
+        visibility = JsonLayoutParser.getVisibility(jsonObject.get("visibility"), visibility);
+
+        protocol = JsonLayoutParser.getProtocol(jsonObject.get("protocol"), context);
     }
 
     public View inflateView(Context context, ViewGroup parent, boolean attachToRoot) {
@@ -80,7 +80,6 @@ public class ViewInfo<T extends View> {
         return view;
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     protected void onInflateView(T view) {
         if (id != null && view.getContext() instanceof Activity) {
             Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class).setKeyId(view, id);
@@ -103,8 +102,15 @@ public class ViewInfo<T extends View> {
         if (paddings != null && paddings.length >= 4)
             view.setPadding(paddings[0], paddings[1], paddings[2], paddings[3]);
 
-        if (background != null)
-            view.setBackground(background.getDrawable());
+        if (background != null) {
+            if (background instanceof Integer) {
+                view.setBackgroundColor((Integer) background);
+            } else if (background instanceof String) {
+                Client.image().with((String) background).loadBg(view);
+            } else if (background instanceof DrawableInfo) {
+                ((DrawableInfo) background).setBackground(view);
+            }
+        }
         if (elevation != 0 && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             view.setElevation(elevation);
 

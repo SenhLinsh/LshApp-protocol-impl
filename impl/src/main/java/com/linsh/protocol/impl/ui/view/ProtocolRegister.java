@@ -11,9 +11,8 @@ import com.linsh.protocol.ui.layout.ListViewProtocol;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <pre>
@@ -23,9 +22,10 @@ import java.util.Set;
  *    desc   :
  * </pre>
  */
+// TODO: 2018/12/6  public -> packaged
 public class ProtocolRegister {
 
-    private static final Map<Class<? extends ViewProtocol>, Set<Class<? extends ViewProtocol>>> PROTOCOL_REGISTERS = new HashMap<>();
+    private static final Map<Class<? extends ViewProtocol>, Map<Class<? extends ViewProtocol>, Boolean>> PROTOCOL_REGISTERS = new HashMap<>();
     private static final Map<String, Class<? extends ViewProtocol>> ALL_REGISTERS = new HashMap<>();
     private static final Map<Class<? extends View>, Class<? extends ViewInfo>> VIEW_INFO_REGISTER = new HashMap<>();
 
@@ -33,22 +33,53 @@ public class ProtocolRegister {
         registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class);
     }
 
+    /**
+     * 注册 ViewProtocol
+     */
     static <T extends ViewProtocol> void registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
-        Set<Class<? extends ViewProtocol>> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
+        registerProtocol(protocol, protocolImpl, false);
+    }
+
+    /**
+     * 注册 ViewProtocol
+     *
+     * @param defaultLayout 是否自带默认布局, 如果自带默认布局, 在 ViewProtocol 没有找到合适的布局时, 将会使用该默认布局
+     */
+    // TODO: 2018/12/6  public -> packaged
+    public static <T extends ViewProtocol> void registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl, boolean defaultLayout) {
+        Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
         if (protocolImpls == null) {
-            protocolImpls = new LinkedHashSet<>();
+            protocolImpls = new LinkedHashMap<>();
             PROTOCOL_REGISTERS.put(protocol, protocolImpls);
         }
-        protocolImpls.add(protocolImpl);
+        protocolImpls.put(protocolImpl, defaultLayout);
         ALL_REGISTERS.put(protocolImpl.getSimpleName(), protocolImpl);
     }
 
+    /**
+     * 解注册 ViewProtocol
+     */
     static <T extends ViewProtocol> void unregisterProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
-        Set<Class<? extends ViewProtocol>> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
+        Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
         if (protocolImpls != null) {
             protocolImpls.remove(protocolImpl);
         }
         ALL_REGISTERS.remove(protocolImpl.getSimpleName());
+    }
+
+    /**
+     * 查找是否存在自带布局的 ViewProtocol
+     */
+    static Class<? extends ViewProtocol> findProtocolImplWithDefaulLayout(Class<? extends ViewProtocol> protocol) {
+        Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
+        if (protocolImpls != null) {
+            for (Map.Entry<Class<? extends ViewProtocol>, Boolean> entry : protocolImpls.entrySet()) {
+                if (entry.getValue()) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
     }
 
     static Class<? extends ViewProtocol> getProtocolImpl(String protocolImplName) {

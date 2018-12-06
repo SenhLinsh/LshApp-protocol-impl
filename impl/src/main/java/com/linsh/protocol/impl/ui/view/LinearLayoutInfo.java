@@ -3,8 +3,9 @@ package com.linsh.protocol.impl.ui.view;
 import android.annotation.SuppressLint;
 import android.widget.LinearLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * <pre>
@@ -20,10 +21,10 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
     public int orientation = -1;
 
     @Override
-    protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
-        super.onDeserialize(object, parent);
-        gravity = JsonLayoutParser.getGravity(object.opt("gravity"), gravity);
-        orientation = JsonLayoutParser.getOrientation(object.opt("orientation"), orientation);
+    public void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
+        super.onDeserialize(jsonObject, context, parent);
+        gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
+        orientation = JsonLayoutParser.getOrientation(jsonObject.get("orientation"), orientation);
     }
 
     @SuppressLint("WrongConstant")
@@ -42,10 +43,11 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
         public int gravity = -1;
 
         @Override
-        protected void onDeserialize(JSONObject object) throws JSONException {
-            super.onDeserialize(object);
-            weight = object.optInt("weight", object.optInt("layout_weight", weight));
-            gravity = JsonLayoutParser.getGravity(object.opt("layout_gravity"), gravity);
+        protected void onDeserialize(JsonObject jsonObject) {
+            super.onDeserialize(jsonObject);
+            JsonElement element = (element = jsonObject.get("weight")) == null ? jsonObject.get("layout_weight") : element;
+            weight = JsonObjectUtils.getInt(element, weight);
+            gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
         }
 
         @Override

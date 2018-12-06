@@ -3,8 +3,8 @@ package com.linsh.protocol.impl.ui.view;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
 
 /**
  * <pre>
@@ -21,21 +21,21 @@ public class TextViewInfo<T extends TextView> extends ViewInfo<T> {
 
     public int gravity = -1;
     public int textSize = -1;
-    public int textColor;
+    public Object textColor;
     public String text;
     public String hint;
 
     @Override
-    protected void onDeserialize(JSONObject object, ViewInfo parent) throws JSONException {
-        super.onDeserialize(object, parent);
-        maxWidth = JsonLayoutParser.getSize(object.opt("maxWidth"), maxWidth);
-        maxHeight = JsonLayoutParser.getSize(object.opt("maxHeight"), maxHeight);
+    public void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
+        super.onDeserialize(jsonObject, context, parent);
+        maxWidth = JsonLayoutParser.getSize(jsonObject.get("maxWidth"), maxWidth);
+        maxHeight = JsonLayoutParser.getSize(jsonObject.get("maxHeight"), maxHeight);
 
-        gravity = JsonLayoutParser.getGravity(object.opt("gravity"), gravity);
-        textSize = JsonLayoutParser.getSize(object.opt("textSize"), textSize);
-        textColor = JsonLayoutParser.getColor(object.opt("textColor"), textColor);
-        text = object.optString("text");
-        hint = object.optString("hint");
+        gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
+        textSize = JsonLayoutParser.getSize(jsonObject.get("textSize"), textSize);
+        textColor = JsonLayoutParser.getColor(jsonObject.get("textColor"), context);
+        text = JsonObjectUtils.getString(jsonObject.get("text"));
+        hint = JsonObjectUtils.getString(jsonObject.get("hint"));
     }
 
     @Override
@@ -51,8 +51,12 @@ public class TextViewInfo<T extends TextView> extends ViewInfo<T> {
         }
         if (textSize >= 0)
             view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-        if (textColor != 0)
-            view.setTextColor(textColor);
+        if (textColor != null) {
+            if (textColor instanceof Integer)
+                view.setTextColor((int) textColor);
+            else if (textColor instanceof ColorInfo)
+                view.setTextColor(((ColorInfo) textColor).getColorStateList());
+        }
         if (text != null)
             view.setText(text);
         if (hint != null)
