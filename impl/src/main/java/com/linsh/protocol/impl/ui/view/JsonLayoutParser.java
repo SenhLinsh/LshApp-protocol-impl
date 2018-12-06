@@ -15,9 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * <pre>
  *    author : Senh Linsh
@@ -96,25 +93,9 @@ class JsonLayoutParser {
         JSONObject protocolObj = object.optJSONObject("protocol");
         if (protocolObj == null)
             return null;
-        String protocolName = protocolObj.optString("name");
-        try {
-            ProtocolInfo info = (ProtocolInfo) ClassUtils.newInstance(ProtocolRegister.getProtocolInfo(protocolName));
-            info.onDeserialize(object);
-            return info;
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    static List<ViewInfo> getChildren(JSONObject object, ViewInfo parent) throws JSONException {
-        JSONArray array = object.optJSONArray("children");
-        if (array == null)
-            return null;
-        List<ViewInfo> res = new ArrayList<>();
-        for (int i = 0; i < array.length(); i++) {
-            res.add(parse(array.optJSONObject(i), parent));
-        }
-        return res;
+        ProtocolInfo info = new ProtocolInfo();
+        info.onDeserialize(protocolObj);
+        return info;
     }
 
     static ImageView.ScaleType getScaleType(Object value) {

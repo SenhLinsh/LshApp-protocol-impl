@@ -6,6 +6,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.linsh.protocol.impl.ui.layout.JsonListViewProtocolImpl;
+import com.linsh.protocol.ui.layout.ListViewProtocol;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
 import java.util.HashMap;
@@ -26,8 +28,10 @@ public class ProtocolRegister {
     private static final Map<Class<? extends ViewProtocol>, Set<Class<? extends ViewProtocol>>> PROTOCOL_REGISTERS = new HashMap<>();
     private static final Map<String, Class<? extends ViewProtocol>> ALL_REGISTERS = new HashMap<>();
     private static final Map<Class<? extends View>, Class<? extends ViewInfo>> VIEW_INFO_REGISTER = new HashMap<>();
-    private static final Map<String, Class<? extends ProtocolInfo>> PROTOCOL_INFO_REGISTER = new HashMap<>();
 
+    static {
+        registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class);
+    }
 
     static <T extends ViewProtocol> void registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
         Set<Class<? extends ViewProtocol>> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
@@ -68,9 +72,5 @@ public class ProtocolRegister {
             clazz = clazz.getSuperclass();
         }
         throw new IllegalArgumentException("无法匹配到指定的 ViewInfo: " + viewClass);
-    }
-
-    static Class<? extends ProtocolInfo> getProtocolInfo(String name) {
-        return PROTOCOL_INFO_REGISTER.get(name);
     }
 }
