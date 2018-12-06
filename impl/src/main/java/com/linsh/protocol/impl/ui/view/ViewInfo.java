@@ -68,9 +68,15 @@ public class ViewInfo<T extends View> {
         } catch (Exception e) {
             throw new IllegalArgumentException("控件生成失败: " + name, e);
         }
+        // 填充 View 属性
         onInflateView(view);
+        // 添加到父 view 中
         if (parent != null && attachToRoot)
             parent.addView(view);
+        // 设置 protocol
+        if (protocol != null && view.getContext() instanceof Activity) {
+            Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class).setViewProtocol(view, protocol);
+        }
         return view;
     }
 
@@ -108,9 +114,5 @@ public class ViewInfo<T extends View> {
             view.setScaleY(scaleY);
         if (visibility != 0)
             view.setVisibility(visibility);
-
-        if (protocol != null && view.getContext() instanceof Activity) {
-            Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class).setViewProtocol(view, protocol);
-        }
     }
 }
