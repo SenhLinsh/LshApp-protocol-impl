@@ -36,11 +36,11 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
     }
 
     @Override
-    protected void onInflateView(T view) {
-        super.onInflateView(view);
+    public void onInflateTarget(T view) {
+        super.onInflateTarget(view);
         if (children != null) {
             for (ViewInfo child : children) {
-                child.inflateView(view.getContext(), view, true);
+                JsonLayoutInflater.from(view.getContext()).inflate(child, view, true);
             }
         }
     }

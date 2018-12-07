@@ -34,15 +34,33 @@ class InfoIdentifier {
         if (name == null)
             throw new IllegalArgumentException("ViewInfo 必须携带 name 属性");
 
-        String className = adaptName(name);
+        Class<? extends View> viewClass;
+        Class<? extends ViewInfo> viewInfoClass = null;
         try {
-            Class<? extends View> viewClass = (Class<? extends View>) Class.forName(className);
-            Class<? extends ViewInfo> viewInfoClass = ProtocolRegister.getViewInfoClass(viewClass);
+            Class[] viewAndInfoClass = ProtocolRegister.getViewAndInfoClass(name);
+            if (viewAndInfoClass != null) {
+                viewClass = viewAndInfoClass[1];
+                viewInfoClass = viewAndInfoClass[0];
+            } else {
+                String className = adaptName(name);
+                viewClass = (Class<? extends View>) Class.forName(className);
+                Class tempClass = viewClass.getSuperclass();
+                while (tempClass != null) {
+                    viewAndInfoClass = ProtocolRegister.getViewAndInfoClass(tempClass.getSimpleName());
+                    if (viewAndInfoClass != null) {
+                        viewInfoClass = viewAndInfoClass[0];
+                        break;
+                    }
+                }
+            }
+            if (viewInfoClass == null)
+                throw new IllegalArgumentException("无法找到匹配的 ViewInfo, name = " + name);
+
             ViewInfo info = (ViewInfo) ClassUtils.newInstance(viewInfoClass);
             info.name = viewClass;
             return info;
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("无法解析 View 的类: " + className);
+            throw new IllegalArgumentException("无法解析 View 的类: " + name);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("ViewInfo 指定的类名必须继承自 " + View.class.getName());
         } catch (Exception e) {

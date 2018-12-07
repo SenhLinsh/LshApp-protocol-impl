@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.linsh.protocol.Client;
-
 /**
  * <pre>
  *    author : Senh Linsh
@@ -27,7 +25,7 @@ public class JsonListViewProtocolImpl<T> extends ListViewProtocolImpl<T> {
     }
 
     private static RecyclerView getDefaultListView(Context context) {
-        RecyclerView recyclerView = Client.ui().view().view(new RecyclerView(context)).getView();
+        RecyclerView recyclerView = new RecyclerView(context);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return recyclerView;

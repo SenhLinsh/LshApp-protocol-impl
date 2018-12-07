@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linsh.protocol.Client;
+import com.linsh.protocol.ui.view.Register;
 import com.linsh.protocol.ui.view.ViewManager;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
@@ -77,7 +78,7 @@ public class ViewManagerImpl implements ViewManager {
             v = loadProtocolFromFile(context, dir, protocol, key, parent);
         }
         if (v == null) {
-            Class<? extends ViewProtocol> protocolImpl = ProtocolRegister.findProtocolImplWithDefaulLayout(protocol);
+            Class<? extends ViewProtocol> protocolImpl = ProtocolRegister.findProtocolImplWithDefaultLayout(protocol);
             if (protocolImpl != null) {
                 Constructor<? extends ViewProtocol> constructor;
                 try {
@@ -113,36 +114,23 @@ public class ViewManagerImpl implements ViewManager {
     }
 
     @Override
-    public <T extends ViewProtocol> ViewManager registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
-        ProtocolRegister.registerProtocol(protocol, protocolImpl);
-        return this;
-    }
-
-    @Override
-    public <T extends ViewProtocol> ViewManager unregisterProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
-        ProtocolRegister.unregisterProtocol(protocol, protocolImpl);
-        return this;
-    }
-
-    @Override
-    public ViewProtocol inflate(String layoutName, Context context) {
+    public View inflate(String layoutName, Context context) {
         return inflate(layoutName, null, false, context);
     }
 
     @Override
-    public ViewProtocol inflate(String layoutName, ViewGroup parent) {
+    public View inflate(String layoutName, ViewGroup parent) {
         return inflate(layoutName, parent, true, parent.getContext());
     }
 
     @Override
-    public ViewProtocol inflate(String layoutName, ViewGroup parent, boolean attach) {
+    public View inflate(String layoutName, ViewGroup parent, boolean attach) {
         return inflate(layoutName, parent, attach, parent.getContext());
     }
 
-    private ViewProtocol inflate(String layoutName, ViewGroup parent, boolean attach, Context context) {
+    private View inflate(String layoutName, ViewGroup parent, boolean attach, Context context) {
         File file = new File(Client.config().ui().resDir(), "layout/" + layoutName);
-        View inflate = JsonLayoutInflater.from(context).inflate(file, parent, attach);
-        return new ViewProtocolImpl<>(inflate);
+        return JsonLayoutInflater.from(context).inflate(file, parent, attach);
     }
 
     @Override
@@ -158,7 +146,7 @@ public class ViewManagerImpl implements ViewManager {
     }
 
     @Override
-    public <V extends View> ViewProtocol<V> view(V view) {
-        return new ViewProtocolImpl<>(view);
+    public Register register() {
+        return ProtocolRegister.getInstance();
     }
 }

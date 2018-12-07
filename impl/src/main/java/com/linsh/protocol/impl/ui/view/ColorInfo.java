@@ -1,10 +1,17 @@
 package com.linsh.protocol.impl.ui.view;
 
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+
+import java.lang.reflect.Type;
 
 /**
  * <pre>
@@ -16,8 +23,15 @@ import android.graphics.drawable.StateListDrawable;
  */
 public class ColorInfo {
 
-    public String color;
+    public int color;
     public String[][] states;
+
+    public ColorInfo() {
+    }
+
+    public ColorInfo(int color) {
+        this.color = color;
+    }
 
     public Drawable getStateListDrawable() {
         if (states != null && states.length > 0) {
@@ -34,10 +48,7 @@ public class ColorInfo {
             }
             return drawable;
         }
-        if (color != null) {
-            return new ColorDrawable(ColorUtils.parseColor(color));
-        }
-        return new ColorDrawable(Color.TRANSPARENT);
+        return new ColorDrawable(color);
     }
 
     public ColorStateList getColorStateList() {
@@ -56,10 +67,7 @@ public class ColorInfo {
             }
             return new ColorStateList(colorStates, colors);
         }
-        if (color != null) {
-            return ColorStateList.valueOf(ColorUtils.parseColor(color));
-        }
-        return ColorStateList.valueOf(Color.TRANSPARENT);
+        return ColorStateList.valueOf(color);
     }
 
     private int getState(String value) {
@@ -76,5 +84,30 @@ public class ColorInfo {
                 return android.R.attr.state_focused;
         }
         throw new IllegalArgumentException("无法识别的 color state: " + value);
+    }
+
+    static class TypeAdapter implements JsonDeserializer<ColorInfo> {
+
+        @Override
+        public ColorInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if (json == null || json.isJsonNull())
+                return null;
+            if (json.isJsonPrimitive()) {
+                JsonPrimitive primitive = json.getAsJsonPrimitive();
+                if (primitive.isNumber()) {
+                    return new ColorInfo(primitive.getAsInt());
+                } else if (primitive.isString()) {
+                    String value = primitive.getAsString();
+                    if (value.matches("(#|0x).+")) {
+                        return new ColorInfo(ColorUtils.parseColor(value));
+                    } else if (value.startsWith("color.")) {
+                        return new ColorInfo(JsonResource.getColor(value.substring("color.".length())));
+                    }
+                }
+            } else if (json.isJsonObject()) {
+                return GsonFactory.getDefault().fromJson(json, ColorInfo.class);
+            }
+            return null;
+        }
     }
 }

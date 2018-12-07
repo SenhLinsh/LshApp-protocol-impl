@@ -11,7 +11,6 @@ import com.linsh.protocol.config.ImageConfig;
 import com.linsh.protocol.config.LogConfig;
 import com.linsh.protocol.config.ThreadConfig;
 import com.linsh.protocol.config.UIConfig;
-import com.linsh.protocol.impl.ui.view.ProtocolRegister;
 import com.linsh.protocol.impl.view.JsonIdTextItemViewProtocol;
 import com.linsh.protocol.impl.view.JsonIdTitleTextItemViewProtocol;
 import com.linsh.protocol.impl.view.TextItemViewProtocol;
@@ -37,9 +36,8 @@ public class DemoApplication extends Application {
         Utils.init(this);
         ClientIniter.initClient(new LshManagerFactory(getConfig()));
 
-        Client.ui().view().registerProtocol(TitleTextItemViewProtocol.class, JsonIdTitleTextItemViewProtocol.class);
-        Client.ui().view().registerProtocol(TextItemViewProtocol.class, JsonIdTextItemViewProtocol.class);
-        ProtocolRegister.registerProtocol(TitleTextItemViewProtocol.class, JsonIdTitleTextItemViewProtocol.class, true);
+        Client.ui().view().register().registerProtocol(TextItemViewProtocol.class, JsonIdTextItemViewProtocol.class);
+        Client.ui().view().register().registerProtocol(TitleTextItemViewProtocol.class, JsonIdTitleTextItemViewProtocol.class, true);
     }
 
     protected Config getConfig() {

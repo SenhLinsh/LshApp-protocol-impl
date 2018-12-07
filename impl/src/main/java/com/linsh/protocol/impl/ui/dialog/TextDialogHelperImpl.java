@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.view.View;
 
 import com.linsh.dialog.LshDialog;
-import com.linsh.protocol.Client;
 import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.TextDialogHelper;
 import com.linsh.protocol.ui.view.ViewProtocol;
@@ -116,9 +115,12 @@ class TextDialogHelperImpl implements TextDialogHelper {
     }
 
     @Override
-    public ViewProtocol<View> getContentView() {
-        if (dialog != null)
-            return Client.ui().view().view(dialog.getWindow().getDecorView());
-        return null;
+    public ViewProtocol getContentView() {
+        return new ViewProtocol() {
+            @Override
+            public View getView() {
+                return dialog.getWindow().getDecorView();
+            }
+        };
     }
 }

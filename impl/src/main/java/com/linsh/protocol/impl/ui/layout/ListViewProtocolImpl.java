@@ -49,7 +49,7 @@ class ListViewProtocolImpl<T> implements ListViewProtocol<T>, View.OnClickListen
     private OnItemLongClickListener<T> onItemLongClickListener;
 
     public ListViewProtocolImpl(Context context) {
-        this(Client.ui().view().view(new RecyclerView(context)).getView());
+        this(new RecyclerView(context));
     }
 
     public ListViewProtocolImpl(RecyclerView recyclerView) {

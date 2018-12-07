@@ -29,8 +29,8 @@ public class RecyclerViewInfo<T extends RecyclerView> extends ViewGroupInfo<T> {
     }
 
     @Override
-    protected void onInflateView(T view) {
-        super.onInflateView(view);
+    public void onInflateTarget(T view) {
+        super.onInflateTarget(view);
         if (spanCount <= 0) {
             view.setLayoutManager(new LinearLayoutManager(view.getContext(), orientation, false));
         } else {

@@ -2,13 +2,21 @@ package com.linsh.protocol.impl.ui.view;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.linsh.protocol.Client;
 import com.linsh.utilseverywhere.BackgroundUtils;
+import com.linsh.utilseverywhere.SDCardUtils;
 
 import java.io.File;
+import java.lang.reflect.Type;
 
 /**
  * <pre>
@@ -29,7 +37,9 @@ public class DrawableInfo {
 
     public void setBackground(View view) {
         if (color != null) {
-            BackgroundUtils.setBackground(view, color.getStateListDrawable());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackground(color.getStateListDrawable());
+            }
         } else if (url != null) {
             Client.image().with(url).loadBg(view);
         } else if (path != null) {
@@ -43,7 +53,9 @@ public class DrawableInfo {
     }
 
     public void setImage(ImageView view) {
-        if (url != null) {
+        if (color != null) {
+            view.setImageDrawable(color.getStateListDrawable());
+        } else if (url != null) {
             Client.image().load(url, view);
         } else if (path != null) {
             Client.image().load(path, view);
@@ -77,5 +89,41 @@ public class DrawableInfo {
         public int color;
         public int dashWidth;
         public int dashGap;
+    }
+
+    static class TypeAdapter implements JsonDeserializer<DrawableInfo> {
+
+        @Override
+        public DrawableInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if (json == null || json.isJsonNull())
+                return null;
+            if (json.isJsonPrimitive()) {
+                DrawableInfo info = new DrawableInfo();
+                JsonPrimitive primitive = json.getAsJsonPrimitive();
+                if (primitive.isNumber()) {
+                    info.color = new ColorInfo(primitive.getAsInt());
+                    return info;
+                } else if (primitive.isString()) {
+                    String value = primitive.getAsString();
+                    if (value.matches("(#|0x).+")) {
+                        info.color = new ColorInfo(ColorUtils.parseColor(value));
+                        return info;
+                    } else if (value.startsWith("color.")) {
+                        info.color = new ColorInfo(JsonResource.getColor(value.substring("color.".length())));
+                        return info;
+                    } else if (value.startsWith("drawable.")) {
+                        info.drawable = value.substring("drawable.".length());
+                        return info;
+                    } else if (value.startsWith("http")) {
+                        info.url = value;
+                        return info;
+                    } else if (value.startsWith("sdcard/") || value.startsWith(SDCardUtils.getRootDirectory().getAbsolutePath())) {
+                        info.path = value;
+                        return info;
+                    }
+                }
+            }
+            return GsonFactory.getDefault().fromJson(json, DrawableInfo.class);
+        }
     }
 }

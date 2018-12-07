@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.linsh.protocol.impl.ui.layout.JsonListViewProtocolImpl;
 import com.linsh.protocol.ui.layout.ListViewProtocol;
+import com.linsh.protocol.ui.view.Info;
+import com.linsh.protocol.ui.view.Register;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
 import java.util.HashMap;
@@ -23,22 +25,37 @@ import java.util.Map;
  *    desc   :
  * </pre>
  */
-// TODO: 2018/12/6  public -> packaged
-public class ProtocolRegister {
+class ProtocolRegister implements Register {
 
+    private static final Register INSTANCE = new ProtocolRegister();
     private static final Map<Class<? extends ViewProtocol>, Map<Class<? extends ViewProtocol>, Boolean>> PROTOCOL_REGISTERS = new HashMap<>();
     private static final Map<String, Class<? extends ViewProtocol>> ALL_REGISTERS = new HashMap<>();
-    private static final Map<Class<? extends View>, Class<? extends ViewInfo>> VIEW_INFO_REGISTER = new HashMap<>();
+    private static final Map<String, Class[]> INFO_REGISTER = new HashMap<>();
 
     static {
-        registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class);
+        INSTANCE.registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class);
+
+        INSTANCE.registerInfo("View", ViewInfo.class, View.class);
+        INSTANCE.registerInfo("View", ViewInfo.class, View.class);
+        INSTANCE.registerInfo("TextView", TextViewInfo.class, TextView.class);
+        INSTANCE.registerInfo("ImageView", ImageViewInfo.class, ImageView.class);
+        INSTANCE.registerInfo("ViewGroup", ViewGroupInfo.class, ViewGroup.class);
+        INSTANCE.registerInfo("LinearLayout", LinearLayoutInfo.class, LinearLayout.class);
+        INSTANCE.registerInfo("RecyclerView", RecyclerViewInfo.class, RecyclerView.class);
+    }
+
+    private ProtocolRegister() {
+    }
+
+    static Register getInstance() {
+        return INSTANCE;
     }
 
     /**
      * 注册 ViewProtocol
      */
-    static <T extends ViewProtocol> void registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
-        registerProtocol(protocol, protocolImpl, false);
+    public <T extends ViewProtocol> Register registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
+        return registerProtocol(protocol, protocolImpl, false);
     }
 
     /**
@@ -47,7 +64,7 @@ public class ProtocolRegister {
      * @param defaultLayout 是否自带默认布局, 如果自带默认布局, 在 ViewProtocol 没有找到合适的布局时, 将会使用该默认布局
      */
     // TODO: 2018/12/6  public -> packaged
-    public static <T extends ViewProtocol> void registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl, boolean defaultLayout) {
+    public <T extends ViewProtocol> Register registerProtocol(Class<T> protocol, Class<? extends T> protocolImpl, boolean defaultLayout) {
         Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
         if (protocolImpls == null) {
             protocolImpls = new LinkedHashMap<>();
@@ -55,23 +72,31 @@ public class ProtocolRegister {
         }
         protocolImpls.put(protocolImpl, defaultLayout);
         ALL_REGISTERS.put(protocolImpl.getSimpleName(), protocolImpl);
+        return this;
     }
 
     /**
      * 解注册 ViewProtocol
      */
-    static <T extends ViewProtocol> void unregisterProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
+    public <T extends ViewProtocol> Register unregisterProtocol(Class<T> protocol, Class<? extends T> protocolImpl) {
         Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
         if (protocolImpls != null) {
             protocolImpls.remove(protocolImpl);
         }
         ALL_REGISTERS.remove(protocolImpl.getSimpleName());
+        return this;
+    }
+
+    @Override
+    public <I, T extends Info<? super I>> Register registerInfo(String name, Class<T> info, Class<I> target) {
+        INFO_REGISTER.put(name, new Class[]{info, target});
+        return this;
     }
 
     /**
      * 查找是否存在自带布局的 ViewProtocol
      */
-    static Class<? extends ViewProtocol> findProtocolImplWithDefaulLayout(Class<? extends ViewProtocol> protocol) {
+    static Class<? extends ViewProtocol> findProtocolImplWithDefaultLayout(Class<? extends ViewProtocol> protocol) {
         Map<Class<? extends ViewProtocol>, Boolean> protocolImpls = PROTOCOL_REGISTERS.get(protocol);
         if (protocolImpls != null) {
             for (Map.Entry<Class<? extends ViewProtocol>, Boolean> entry : protocolImpls.entrySet()) {
@@ -87,23 +112,7 @@ public class ProtocolRegister {
         return ALL_REGISTERS.get(protocolImplName);
     }
 
-    static {
-        VIEW_INFO_REGISTER.put(View.class, ViewInfo.class);
-        VIEW_INFO_REGISTER.put(TextView.class, TextViewInfo.class);
-        VIEW_INFO_REGISTER.put(ImageView.class, ImageViewInfo.class);
-        VIEW_INFO_REGISTER.put(ViewGroup.class, ViewGroupInfo.class);
-        VIEW_INFO_REGISTER.put(LinearLayout.class, LinearLayoutInfo.class);
-        VIEW_INFO_REGISTER.put(RecyclerView.class, RecyclerViewInfo.class);
-    }
-
-    static Class<? extends ViewInfo> getViewInfoClass(Class<? extends View> viewClass) {
-        Class clazz = viewClass;
-        while (clazz != null) {
-            Class<? extends ViewInfo> viewInfoClass = VIEW_INFO_REGISTER.get(clazz);
-            if (viewInfoClass != null)
-                return viewInfoClass;
-            clazz = clazz.getSuperclass();
-        }
-        throw new IllegalArgumentException("无法匹配到指定的 ViewInfo: " + viewClass);
+    static Class[] getViewAndInfoClass(String name) {
+        return INFO_REGISTER.get(name);
     }
 }

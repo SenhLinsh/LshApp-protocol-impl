@@ -1,7 +1,6 @@
 package com.linsh.protocol.impl.ui.view;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,7 @@ import android.view.ViewGroup;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.linsh.protocol.Client;
-import com.linsh.utilseverywhere.ClassUtils;
+import com.linsh.protocol.ui.view.Info;
 
 /**
  * <pre>
@@ -19,7 +18,7 @@ import com.linsh.utilseverywhere.ClassUtils;
  *    desc   : 通过 Json 类表示一个 View 类的信息
  * </pre>
  */
-public class ViewInfo<T extends View> {
+public class ViewInfo<T extends View> implements Info<T> {
     // View
     public Class<T> name;
     public String id;
@@ -59,28 +58,8 @@ public class ViewInfo<T extends View> {
         protocol = JsonLayoutParser.getProtocol(jsonObject.get("protocol"), context);
     }
 
-    public View inflateView(Context context, ViewGroup parent, boolean attachToRoot) {
-        if (name == null)
-            throw new IllegalArgumentException("控件包名(ViewInfo.name) 不能为 null");
-        T view;
-        try {
-            view = (T) ClassUtils.newInstance(name, new Class[]{Context.class}, new Object[]{context});
-        } catch (Exception e) {
-            throw new IllegalArgumentException("控件生成失败: " + name, e);
-        }
-        // 填充 View 属性
-        onInflateView(view);
-        // 添加到父 view 中
-        if (parent != null && attachToRoot)
-            parent.addView(view);
-        // 设置 protocol
-        if (protocol != null && view.getContext() instanceof Activity) {
-            Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class).setViewProtocol(view, protocol);
-        }
-        return view;
-    }
-
-    protected void onInflateView(T view) {
+    @Override
+    public void onInflateTarget(T view) {
         if (id != null && view.getContext() instanceof Activity) {
             Client.activity().target((Activity) view.getContext()).useSubscriber(JsonLayoutFinder.class).setKeyId(view, id);
         }

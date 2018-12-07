@@ -1,5 +1,7 @@
 package com.linsh.protocol.impl.ui.view;
 
+import android.view.View;
+
 /**
  * <pre>
  *    author : Senh Linsh
@@ -8,10 +10,6 @@ package com.linsh.protocol.impl.ui.view;
  *    desc   :
  * </pre>
  */
-public class JsonResource {
-
-    // TODO: 2018/12/7
-    public static int getColor(String name) {
-        return 0;
-    }
+public class VisibilityInfo {
+    public int visibility = View.VISIBLE;
 }

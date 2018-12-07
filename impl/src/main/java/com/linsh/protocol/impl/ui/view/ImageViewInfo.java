@@ -34,8 +34,8 @@ public class ImageViewInfo<T extends ImageView> extends ViewInfo<T> {
     }
 
     @Override
-    protected void onInflateView(T view) {
-        super.onInflateView(view);
+    public void onInflateTarget(T view) {
+        super.onInflateTarget(view);
         if (maxWidth >= 0)
             view.setMinimumWidth(maxWidth);
         if (maxHeight >= 0)

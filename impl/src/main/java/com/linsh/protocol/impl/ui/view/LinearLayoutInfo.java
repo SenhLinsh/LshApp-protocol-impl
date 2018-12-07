@@ -29,8 +29,8 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
 
     @SuppressLint("WrongConstant")
     @Override
-    protected void onInflateView(T view) {
-        super.onInflateView(view);
+    public void onInflateTarget(T view) {
+        super.onInflateTarget(view);
         if (gravity >= 0)
             view.setGravity(gravity);
         if (orientation >= 0)

@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.PopupWindow;
 
-import com.linsh.protocol.Client;
 import com.linsh.protocol.ui.popup.PopupWindowManager;
 import com.linsh.protocol.ui.view.ViewProtocol;
 import com.linsh.protocol.ui.window.WindowViewHelper;
@@ -23,7 +22,7 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
 
     private final Context context;
     private final PopupWindow window;
-    private ViewProtocol viewHelper;
+    private View view;
 
     public PopupWindowManagerImpl(Context context) {
         this.context = context;
@@ -37,29 +36,29 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
 
     @Override
     public PopupWindowManager setView(int layout) {
-        viewHelper = Client.ui().view().view(LayoutInflater.from(context).inflate(layout, null));
-        window.setContentView(viewHelper.getView());
+        view = LayoutInflater.from(context).inflate(layout, null);
+        window.setContentView(view);
         return this;
     }
 
     @Override
     public PopupWindowManager setView(View view) {
-        viewHelper = Client.ui().view().view(view);
-        window.setContentView(viewHelper.getView());
+        this.view = view;
+        window.setContentView(this.view);
         return this;
     }
 
     @Override
     public PopupWindowManager setView(ViewProtocol viewHelper) {
-        this.viewHelper = viewHelper;
+        this.view = viewHelper.getView();
         window.setContentView(viewHelper.getView());
         return this;
     }
 
     @Override
     public PopupWindowManager setView(WindowViewHelper helper) {
-        viewHelper = Client.ui().view().view(helper.getView());
-        window.setContentView(viewHelper.getView());
+        view = helper.getView();
+        window.setContentView(view);
         return this;
     }
 
