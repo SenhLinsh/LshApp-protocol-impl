@@ -1,14 +1,11 @@
 package com.linsh.protocol.impl.ui.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 
-import com.linsh.dialog.LshDialog;
-import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.ListDialogHelper;
 import com.linsh.protocol.ui.view.ViewProtocol;
-import com.linsh.utilseverywhere.ListUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,37 +18,46 @@ import java.util.List;
  *    desc   :
  * </pre>
  */
-class ListDialogHelperImpl implements ListDialogHelper {
+class ListDialogHelperImpl extends BaseDialogHelperImpl<ListDialogHelper> implements ListDialogHelper {
 
-    private final LshDialog.ListDialogBuilder builder;
-    private LshDialog dialog;
+    private List<? extends CharSequence> data;
+    private OnItemClickListener listener;
+    private int checkedItem = -1;
+    private boolean[] checkedItems;
+    private int type;
 
     public ListDialogHelperImpl(Activity activity) {
-        builder = new LshDialog(activity).buildList();
+        this(activity, null);
     }
 
     public ListDialogHelperImpl(Activity activity, List<? extends CharSequence> items) {
-        builder = new LshDialog(activity).buildList();
-        setItems(items);
+        super(activity);
+        data = items;
     }
 
     @Override
     public ListDialogHelper singleChoice() {
+        type = 1;
         return this;
     }
 
     @Override
     public ListDialogHelper singleChoice(int checkedItem) {
+        type = 1;
+        this.checkedItem = checkedItem;
         return this;
     }
 
     @Override
     public ListDialogHelper multiChoice() {
+        type = 2;
         return this;
     }
 
     @Override
     public ListDialogHelper multiChoice(boolean[] checkedItems) {
+        type = 2;
+        this.checkedItems = checkedItems;
         return this;
     }
 
@@ -72,15 +78,8 @@ class ListDialogHelperImpl implements ListDialogHelper {
 
     @Override
     public ListDialogHelper setItems(List<? extends CharSequence> list, final OnItemClickListener listener) {
-        List<String> stringList = ListUtils.toStringList(list, null);
-        builder.setList(stringList);
-        if (listener != null)
-            builder.setOnItemClickListener(new LshDialog.OnItemClickListener() {
-                @Override
-                public void onClick(LshDialog lshDialog, int i) {
-                    listener.onItemClick(ListDialogHelperImpl.this, i);
-                }
-            });
+        this.data = list;
+        this.listener = listener;
         return this;
     }
 
@@ -91,79 +90,51 @@ class ListDialogHelperImpl implements ListDialogHelper {
 
     @Override
     public ListDialogHelper setOnItemClickListener(final OnItemClickListener listener) {
-        if (listener != null)
-            builder.setOnItemClickListener(new LshDialog.OnItemClickListener() {
-                @Override
-                public void onClick(LshDialog lshDialog, int i) {
-                    listener.onItemClick(ListDialogHelperImpl.this, i);
-                }
-            });
-        else
-            builder.setOnItemClickListener(null);
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper title(CharSequence title) {
-        builder.setTitle(title.toString());
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper positiveBtn(OnClickListener<ListDialogHelper> listener) {
-        return positiveBtn("确定", listener);
-    }
-
-    @Override
-    public ListDialogHelper positiveBtn(CharSequence text, OnClickListener<ListDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper negativeBtn(OnClickListener<ListDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper negativeBtn(CharSequence text, OnClickListener<ListDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper neutralBtn(OnClickListener<ListDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper neutralBtn(CharSequence text, OnClickListener<ListDialogHelper> listener) {
+        this.listener = listener;
         return this;
     }
 
     @Override
     public ListDialogHelper show() {
-        if (dialog != null)
-            dialog.show();
-        else
-            dialog = builder.show();
-        return this;
-    }
-
-    @Override
-    public ListDialogHelper dismiss() {
-        if (dialog != null)
-            dialog.dismiss();
-        return this;
-    }
-
-    @Override
-    public Dialog build() {
-        // TODO: 2018/12/2
-        return null;
+        if (data != null) {
+            CharSequence[] array = data.toArray(new CharSequence[data.size()]);
+            if (type == 1) {
+                builder.setSingleChoiceItems(array, checkedItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which >= 0) {
+                            if (listener != null)
+                                listener.onItemClick(ListDialogHelperImpl.this, which);
+                        }
+                    }
+                });
+            } else if (type == 2) {
+                builder.setMultiChoiceItems(array, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        if (which >= 0) {
+                            if (listener != null)
+                                listener.onItemClick(ListDialogHelperImpl.this, which);
+                        }
+                    }
+                });
+            } else {
+                builder.setItems(array, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which >= 0) {
+                            if (listener != null)
+                                listener.onItemClick(ListDialogHelperImpl.this, which);
+                        }
+                    }
+                });
+            }
+        }
+        return super.show();
     }
 
     @Override
     public ViewProtocol getContentView() {
-        // TODO: 2018/12/2
         return null;
     }
 }

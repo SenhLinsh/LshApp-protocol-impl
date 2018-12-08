@@ -1,13 +1,13 @@
 package com.linsh.protocol.impl.ui.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.view.View;
+import android.widget.TextView;
 
-import com.linsh.dialog.LshDialog;
-import com.linsh.protocol.ui.OnClickListener;
+import com.linsh.protocol.Client;
 import com.linsh.protocol.ui.dialog.TextDialogHelper;
 import com.linsh.protocol.ui.view.ViewProtocol;
+import com.linsh.utilseverywhere.UnitConverseUtils;
 
 /**
  * <pre>
@@ -17,101 +17,34 @@ import com.linsh.protocol.ui.view.ViewProtocol;
  *    desc   :
  * </pre>
  */
-class TextDialogHelperImpl implements TextDialogHelper {
+class TextDialogHelperImpl extends BaseDialogHelperImpl<TextDialogHelper> implements TextDialogHelper {
 
-    private final LshDialog.TextDialogBuilder builder;
-    private LshDialog dialog;
+    private TextView contentView;
 
     public TextDialogHelperImpl(Activity activity) {
-        builder = new LshDialog(activity).buildText();
+        this(activity, null);
     }
 
-    public TextDialogHelperImpl(Activity activity, CharSequence title) {
-        builder = new LshDialog(activity).buildText();
-        builder.setTitle(title.toString());
+    public TextDialogHelperImpl(Activity activity, CharSequence content) {
+        super(activity);
+        contentView = new TextView(activity);
+        contentView.setTextSize(Client.value().textSize().text());
+        int padding = UnitConverseUtils.dp2px(10);
+        contentView.setPadding(padding * 2, padding, padding * 2, padding);
+        builder.setView(contentView);
+        content(content);
     }
 
     @Override
     public TextDialogHelper content(CharSequence content) {
-        builder.setContent(content.toString());
+        if (content == null) content = "";
+        contentView.setText(content);
         return this;
     }
 
     @Override
     public CharSequence getContent() {
-        return null;
-    }
-
-    @Override
-    public TextDialogHelper title(CharSequence title) {
-        builder.setTitle(title.toString());
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper positiveBtn(OnClickListener<TextDialogHelper> listener) {
-        return positiveBtn("确定", listener);
-    }
-
-    @Override
-    public TextDialogHelper positiveBtn(CharSequence text, final OnClickListener<TextDialogHelper> listener) {
-        builder.setPositiveButton(text.toString(), new LshDialog.OnPositiveListener() {
-            @Override
-            public void onClick(LshDialog lshDialog) {
-                if (listener != null)
-                    listener.onClick(TextDialogHelperImpl.this);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper negativeBtn(OnClickListener<TextDialogHelper> listener) {
-        return negativeBtn("取消", listener);
-    }
-
-    @Override
-    public TextDialogHelper negativeBtn(CharSequence text, final OnClickListener<TextDialogHelper> listener) {
-        builder.setNegativeButton(text.toString(), new LshDialog.OnNegativeListener() {
-            @Override
-            public void onClick(LshDialog lshDialog) {
-                if (listener != null)
-                    listener.onClick(TextDialogHelperImpl.this);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper neutralBtn(OnClickListener<TextDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper neutralBtn(CharSequence text, OnClickListener<TextDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper show() {
-        if (dialog != null)
-            dialog.show();
-        else
-            dialog = builder.show();
-        return this;
-    }
-
-    @Override
-    public TextDialogHelper dismiss() {
-        if (dialog != null)
-            dialog.dismiss();
-        return this;
-    }
-
-    @Override
-    public Dialog build() {
-        // TODO: 2018/12/2
-        return null;
+        return contentView.getText();
     }
 
     @Override
@@ -119,7 +52,7 @@ class TextDialogHelperImpl implements TextDialogHelper {
         return new ViewProtocol() {
             @Override
             public View getView() {
-                return dialog.getWindow().getDecorView();
+                return contentView;
             }
         };
     }

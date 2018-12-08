@@ -1,10 +1,9 @@
 package com.linsh.protocol.impl.ui.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.view.View;
+import android.widget.EditText;
 
-import com.linsh.dialog.LshDialog;
-import com.linsh.protocol.ui.OnClickListener;
 import com.linsh.protocol.ui.dialog.InputDialogHelper;
 import com.linsh.protocol.ui.view.ViewProtocol;
 
@@ -16,116 +15,51 @@ import com.linsh.protocol.ui.view.ViewProtocol;
  *    desc   :
  * </pre>
  */
-class InputDialogHelperImpl implements InputDialogHelper {
+class InputDialogHelperImpl extends BaseDialogHelperImpl<InputDialogHelper> implements InputDialogHelper {
 
-    private final LshDialog.InputDialogBuilder builder;
-    private LshDialog dialog;
+    private EditText contentView;
 
     public InputDialogHelperImpl(Activity activity) {
-        builder = new LshDialog(activity).buildInput();
+        this(activity, null);
     }
 
-    public InputDialogHelperImpl(Activity activity, CharSequence title) {
-        builder = new LshDialog(activity).buildInput();
-        builder.setTitle(title.toString());
+    public InputDialogHelperImpl(Activity activity, CharSequence content) {
+        super(activity);
+        contentView = new EditText(activity);
+        builder.setView(contentView);
+        content(content);
     }
 
     @Override
     public InputDialogHelper hint(CharSequence hint) {
-        builder.setHint(hint.toString());
+        contentView.setHint(hint);
         return this;
     }
 
     @Override
     public InputDialogHelper content(CharSequence content) {
+        if (content == null) content = "";
+        contentView.setText(content);
         return this;
     }
 
     @Override
     public CharSequence getHint() {
-        return null;
+        return contentView.getHint();
     }
 
     @Override
     public CharSequence getContent() {
-        return null;
-    }
-
-    @Override
-    public InputDialogHelper title(CharSequence title) {
-        builder.setTitle(title.toString());
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper positiveBtn(OnClickListener<InputDialogHelper> listener) {
-        return positiveBtn("确定", listener);
-    }
-
-    @Override
-    public InputDialogHelper positiveBtn(CharSequence text, final OnClickListener<InputDialogHelper> listener) {
-        builder.setPositiveButton(text.toString(), new LshDialog.OnInputPositiveListener() {
-            @Override
-            public void onClick(LshDialog lshDialog, String s) {
-                if (listener != null)
-                    listener.onClick(InputDialogHelperImpl.this);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper negativeBtn(OnClickListener<InputDialogHelper> listener) {
-        return negativeBtn("确定", listener);
-    }
-
-    @Override
-    public InputDialogHelper negativeBtn(CharSequence text, final OnClickListener<InputDialogHelper> listener) {
-        builder.setNegativeButton(text.toString(), new LshDialog.OnInputNegativeListener() {
-            @Override
-            public void onClick(LshDialog lshDialog, String s) {
-                if (listener != null)
-                    listener.onClick(InputDialogHelperImpl.this);
-            }
-        });
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper neutralBtn(OnClickListener<InputDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper neutralBtn(CharSequence text, OnClickListener<InputDialogHelper> listener) {
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper show() {
-        if (dialog == null)
-            dialog = builder.show();
-        else
-            dialog.show();
-        return this;
-    }
-
-    @Override
-    public InputDialogHelper dismiss() {
-        if (dialog != null)
-            dialog.dismiss();
-        return this;
-    }
-
-    @Override
-    public Dialog build() {
-        // TODO: 2018/12/2
-        return null;
+        return contentView.getText();
     }
 
     @Override
     public ViewProtocol getContentView() {
-        // TODO: 2018/12/2
-        return null;
+        return new ViewProtocol() {
+            @Override
+            public View getView() {
+                return contentView;
+            }
+        };
     }
 }
