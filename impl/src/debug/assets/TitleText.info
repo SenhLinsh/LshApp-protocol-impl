@@ -7,11 +7,6 @@
 	background: "#FFFF55FF",
 	padding: 20,
 
-	protocol: {
-		name: "TitleTextItemViewProtocol",
-		impl: "JsonIdTitleTextItemViewProtocol"
-	},
-
 	children: [
 		{
 			name: "TextView",

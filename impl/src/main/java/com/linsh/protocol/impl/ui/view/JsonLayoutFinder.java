@@ -79,7 +79,8 @@ class JsonLayoutFinder implements ActivitySubscribe {
             }
             Client.log().print().w("实例化 ViewProtocol 失败", "protocolInfo.name: " + protocolInfo.name + ", key: " + protocolInfo.key);
         }
-        throw new IllegalArgumentException("没有找到合适的实现类来生成实例");
+        throw new IllegalArgumentException("没有找到合适的实现类来生成 ViewProtocol 实例, " +
+                "ProtocolInfo.name=" + protocolInfo.name + ", key=" + protocolInfo.key + ", impl=" + protocolInfo.impl);
     }
 
     View findViewByKeyId(Activity activity, String keyId) {

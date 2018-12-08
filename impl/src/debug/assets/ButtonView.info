@@ -1,0 +1,14 @@
+{
+	name: "FrameLayout",
+	width: "MP",
+	height: "MP",
+	background: "#FFFF55FF",
+	padding: 20,
+    children: [
+        {
+            name: "Button",
+            id: "bt_button",
+            layout_gravity: "Center"
+        }
+    ]
+}

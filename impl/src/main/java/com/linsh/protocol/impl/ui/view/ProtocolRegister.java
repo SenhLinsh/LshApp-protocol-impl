@@ -33,7 +33,7 @@ class ProtocolRegister implements Register {
     private static final Map<String, Class[]> INFO_REGISTER = new HashMap<>();
 
     static {
-        INSTANCE.registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class);
+        INSTANCE.registerProtocol(ListViewProtocol.class, JsonListViewProtocolImpl.class, true);
 
         INSTANCE.registerInfo("View", ViewInfo.class, View.class);
         INSTANCE.registerInfo("View", ViewInfo.class, View.class);
