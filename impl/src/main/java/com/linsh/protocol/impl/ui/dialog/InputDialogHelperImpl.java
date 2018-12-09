@@ -4,8 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.EditText;
 
-import com.linsh.protocol.ui.dialog.InputDialogHelper;
-import com.linsh.protocol.ui.view.ViewProtocol;
+import com.linsh.protocol.ui.dialog.InputDialogProtocol;
 
 /**
  * <pre>
@@ -15,7 +14,7 @@ import com.linsh.protocol.ui.view.ViewProtocol;
  *    desc   :
  * </pre>
  */
-class InputDialogHelperImpl extends BaseDialogHelperImpl<InputDialogHelper> implements InputDialogHelper {
+class InputDialogHelperImpl extends BaseDialogHelperImpl<InputDialogProtocol> implements InputDialogProtocol {
 
     private EditText contentView;
 
@@ -31,13 +30,13 @@ class InputDialogHelperImpl extends BaseDialogHelperImpl<InputDialogHelper> impl
     }
 
     @Override
-    public InputDialogHelper hint(CharSequence hint) {
+    public InputDialogProtocol hint(CharSequence hint) {
         contentView.setHint(hint);
         return this;
     }
 
     @Override
-    public InputDialogHelper content(CharSequence content) {
+    public InputDialogProtocol content(CharSequence content) {
         if (content == null) content = "";
         contentView.setText(content);
         return this;
@@ -54,12 +53,7 @@ class InputDialogHelperImpl extends BaseDialogHelperImpl<InputDialogHelper> impl
     }
 
     @Override
-    public ViewProtocol getContentView() {
-        return new ViewProtocol() {
-            @Override
-            public View getView() {
-                return contentView;
-            }
-        };
+    public View getContentView() {
+        return contentView;
     }
 }

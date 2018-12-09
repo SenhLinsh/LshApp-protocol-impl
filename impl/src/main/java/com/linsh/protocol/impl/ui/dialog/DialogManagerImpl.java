@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.view.View;
 
 import com.linsh.protocol.activity.ActivitySubscribe;
-import com.linsh.protocol.ui.dialog.CustomDialogHelper;
-import com.linsh.protocol.ui.dialog.DialogHelper;
+import com.linsh.protocol.ui.dialog.BaseDialogProtocol;
+import com.linsh.protocol.ui.dialog.CustomDialogProtocol;
 import com.linsh.protocol.ui.dialog.DialogManager;
-import com.linsh.protocol.ui.dialog.InputDialogHelper;
-import com.linsh.protocol.ui.dialog.ListDialogHelper;
-import com.linsh.protocol.ui.dialog.LoadingDialogHelper;
-import com.linsh.protocol.ui.dialog.TextDialogHelper;
+import com.linsh.protocol.ui.dialog.DialogProtocol;
+import com.linsh.protocol.ui.dialog.InputDialogProtocol;
+import com.linsh.protocol.ui.dialog.ListDialogProtocol;
+import com.linsh.protocol.ui.dialog.LoadingDialogProtocol;
+import com.linsh.protocol.ui.dialog.TextDialogProtocol;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,89 +30,89 @@ public class DialogManagerImpl implements DialogManager, ActivitySubscribe.OnDes
     private Object dialogHelper;
 
     @Override
-    public LoadingDialogHelper loading() {
+    public LoadingDialogProtocol loading() {
         LoadingDialogHelperImpl helper = new LoadingDialogHelperImpl(activity);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public LoadingDialogHelper loading(CharSequence content) {
+    public LoadingDialogProtocol loading(CharSequence content) {
         LoadingDialogHelperImpl helper = new LoadingDialogHelperImpl(activity, content);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public TextDialogHelper text() {
+    public TextDialogProtocol text() {
         TextDialogHelperImpl helper = new TextDialogHelperImpl(activity);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public TextDialogHelper text(CharSequence content) {
+    public TextDialogProtocol text(CharSequence content) {
         TextDialogHelperImpl helper = new TextDialogHelperImpl(activity, content);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public InputDialogHelper input() {
+    public InputDialogProtocol input() {
         InputDialogHelperImpl helper = new InputDialogHelperImpl(activity);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public InputDialogHelper input(CharSequence content) {
+    public InputDialogProtocol input(CharSequence content) {
         InputDialogHelperImpl helper = new InputDialogHelperImpl(activity, content);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public ListDialogHelper list() {
+    public ListDialogProtocol list() {
         ListDialogHelperImpl helper = new ListDialogHelperImpl(activity);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public ListDialogHelper list(CharSequence[] items) {
+    public ListDialogProtocol list(CharSequence[] items) {
         ListDialogHelperImpl helper = new ListDialogHelperImpl(activity, Arrays.asList(items));
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public ListDialogHelper list(List<? extends CharSequence> items) {
+    public ListDialogProtocol list(List<? extends CharSequence> items) {
         ListDialogHelperImpl helper = new ListDialogHelperImpl(activity, items);
         dialogHelper = helper;
         return helper;
     }
 
     @Override
-    public CustomDialogHelper custom() {
+    public CustomDialogProtocol custom() {
         return null;
     }
 
     @Override
-    public CustomDialogHelper custom(View view) {
+    public CustomDialogProtocol custom(View view) {
         return null;
     }
 
     @Override
-    public CustomDialogHelper custom(int layout) {
+    public CustomDialogProtocol custom(int layout) {
         return null;
     }
 
     @Override
     public void dismiss() {
-        if (dialogHelper instanceof LoadingDialogHelper) {
-            ((LoadingDialogHelper) dialogHelper).dismiss();
-        } else if (dialogHelper instanceof DialogHelper) {
-            ((DialogHelper) dialogHelper).dismiss();
+        if (dialogHelper instanceof LoadingDialogProtocol) {
+            ((LoadingDialogProtocol) dialogHelper).dismiss();
+        } else if (dialogHelper instanceof BaseDialogProtocol) {
+            ((DialogProtocol) dialogHelper).getDialog().dismiss();
         }
     }
 

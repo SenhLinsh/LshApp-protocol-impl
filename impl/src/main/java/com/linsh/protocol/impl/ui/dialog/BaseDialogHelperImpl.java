@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 
 import com.linsh.protocol.ui.OnClickListener;
-import com.linsh.protocol.ui.dialog.DialogHelper;
+import com.linsh.protocol.ui.dialog.BaseDialogProtocol;
 
 /**
  * <pre>
@@ -16,7 +16,7 @@ import com.linsh.protocol.ui.dialog.DialogHelper;
  *    desc   :
  * </pre>
  */
-public abstract class BaseDialogHelperImpl<T extends DialogHelper> implements DialogHelper<T> {
+public abstract class BaseDialogHelperImpl<T extends BaseDialogProtocol> implements BaseDialogProtocol<T> {
 
     protected AlertDialog.Builder builder;
     protected Dialog dialog;
@@ -99,9 +99,7 @@ public abstract class BaseDialogHelperImpl<T extends DialogHelper> implements Di
     }
 
     @Override
-    public Dialog build() {
-        if (dialog == null)
-            dialog = builder.create();
+    public Dialog getDialog() {
         return dialog;
     }
 }

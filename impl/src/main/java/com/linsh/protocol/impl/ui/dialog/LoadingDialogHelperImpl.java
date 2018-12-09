@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.linsh.protocol.Client;
 import com.linsh.protocol.impl.R;
-import com.linsh.protocol.ui.dialog.CustomDialogHelper;
-import com.linsh.protocol.ui.dialog.LoadingDialogHelper;
+import com.linsh.protocol.ui.dialog.CustomDialogProtocol;
+import com.linsh.protocol.ui.dialog.LoadingDialogProtocol;
 
 /**
  * <pre>
@@ -19,9 +19,9 @@ import com.linsh.protocol.ui.dialog.LoadingDialogHelper;
  *    desc   :
  * </pre>
  */
-class LoadingDialogHelperImpl implements LoadingDialogHelper {
+class LoadingDialogHelperImpl implements LoadingDialogProtocol {
 
-    private final CustomDialogHelper custom;
+    private final CustomDialogProtocol custom;
     private final ProgressBar progressBar;
     private final TextView textView;
 
@@ -42,63 +42,63 @@ class LoadingDialogHelperImpl implements LoadingDialogHelper {
     }
 
     @Override
-    public LoadingDialogHelper title(CharSequence title) {
+    public LoadingDialogProtocol title(CharSequence title) {
         custom.title(title);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper content(CharSequence content) {
+    public LoadingDialogProtocol content(CharSequence content) {
         textView.setText(content);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper progress(float progress) {
+    public LoadingDialogProtocol progress(float progress) {
         progressBar.setProgress((int) progress * 100);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper horizontal() {
+    public LoadingDialogProtocol horizontal() {
         progressBar.setHorizontalScrollBarEnabled(true);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper horizontal(float progress) {
+    public LoadingDialogProtocol horizontal(float progress) {
         progressBar.setHorizontalScrollBarEnabled(true);
         progressBar.setProgress((int) progress * 100);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper round() {
+    public LoadingDialogProtocol round() {
         progressBar.setHorizontalScrollBarEnabled(false);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper round(float progress) {
+    public LoadingDialogProtocol round(float progress) {
         progressBar.setHorizontalScrollBarEnabled(false);
         progressBar.setProgress((int) progress * 100);
         return this;
     }
 
     @Override
-    public LoadingDialogHelper show() {
+    public LoadingDialogProtocol show() {
         custom.show();
         return this;
     }
 
     @Override
-    public LoadingDialogHelper dismiss() {
+    public LoadingDialogProtocol dismiss() {
         custom.dismiss();
         return this;
     }
 
     @Override
-    public Dialog build() {
-        return custom.build();
+    public Dialog getDialog() {
+        return custom.getDialog();
     }
 }

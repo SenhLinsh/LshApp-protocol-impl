@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.PopupWindow;
 
 import com.linsh.protocol.ui.popup.PopupWindowManager;
-import com.linsh.protocol.ui.view.ViewProtocol;
 import com.linsh.protocol.ui.window.WindowViewHelper;
 
 /**
@@ -45,13 +44,6 @@ public class PopupWindowManagerImpl implements PopupWindowManager {
     public PopupWindowManager setView(View view) {
         this.view = view;
         window.setContentView(this.view);
-        return this;
-    }
-
-    @Override
-    public PopupWindowManager setView(ViewProtocol viewHelper) {
-        this.view = viewHelper.getView();
-        window.setContentView(viewHelper.getView());
         return this;
     }
 

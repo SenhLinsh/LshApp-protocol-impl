@@ -5,8 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.linsh.protocol.Client;
-import com.linsh.protocol.ui.dialog.TextDialogHelper;
-import com.linsh.protocol.ui.view.ViewProtocol;
+import com.linsh.protocol.ui.dialog.TextDialogProtocol;
 import com.linsh.utilseverywhere.UnitConverseUtils;
 
 /**
@@ -17,7 +16,7 @@ import com.linsh.utilseverywhere.UnitConverseUtils;
  *    desc   :
  * </pre>
  */
-class TextDialogHelperImpl extends BaseDialogHelperImpl<TextDialogHelper> implements TextDialogHelper {
+class TextDialogHelperImpl extends BaseDialogHelperImpl<TextDialogProtocol> implements TextDialogProtocol {
 
     private TextView contentView;
 
@@ -36,7 +35,7 @@ class TextDialogHelperImpl extends BaseDialogHelperImpl<TextDialogHelper> implem
     }
 
     @Override
-    public TextDialogHelper content(CharSequence content) {
+    public TextDialogProtocol content(CharSequence content) {
         if (content == null) content = "";
         contentView.setText(content);
         return this;
@@ -48,12 +47,7 @@ class TextDialogHelperImpl extends BaseDialogHelperImpl<TextDialogHelper> implem
     }
 
     @Override
-    public ViewProtocol getContentView() {
-        return new ViewProtocol() {
-            @Override
-            public View getView() {
-                return contentView;
-            }
-        };
+    public View getContentView() {
+        return contentView;
     }
 }

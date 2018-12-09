@@ -3,9 +3,9 @@ package com.linsh.protocol.impl.ui.dialog;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-import com.linsh.protocol.ui.dialog.ListDialogHelper;
-import com.linsh.protocol.ui.view.ViewProtocol;
+import com.linsh.protocol.ui.dialog.ListDialogProtocol;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  *    desc   :
  * </pre>
  */
-class ListDialogHelperImpl extends BaseDialogHelperImpl<ListDialogHelper> implements ListDialogHelper {
+class ListDialogHelperImpl extends BaseDialogHelperImpl<ListDialogProtocol> implements ListDialogProtocol {
 
     private List<? extends CharSequence> data;
     private OnItemClickListener listener;
@@ -36,66 +36,66 @@ class ListDialogHelperImpl extends BaseDialogHelperImpl<ListDialogHelper> implem
     }
 
     @Override
-    public ListDialogHelper singleChoice() {
+    public ListDialogProtocol singleChoice() {
         type = 1;
         return this;
     }
 
     @Override
-    public ListDialogHelper singleChoice(int checkedItem) {
+    public ListDialogProtocol singleChoice(int checkedItem) {
         type = 1;
         this.checkedItem = checkedItem;
         return this;
     }
 
     @Override
-    public ListDialogHelper multiChoice() {
+    public ListDialogProtocol multiChoice() {
         type = 2;
         return this;
     }
 
     @Override
-    public ListDialogHelper multiChoice(boolean[] checkedItems) {
+    public ListDialogProtocol multiChoice(boolean[] checkedItems) {
         type = 2;
         this.checkedItems = checkedItems;
         return this;
     }
 
     @Override
-    public ListDialogHelper setItems(CharSequence[] list) {
+    public ListDialogProtocol setItems(CharSequence[] list) {
         return setItems(list, null);
     }
 
     @Override
-    public ListDialogHelper setItems(CharSequence[] list, OnItemClickListener listener) {
+    public ListDialogProtocol setItems(CharSequence[] list, OnItemClickListener listener) {
         return setItems(Arrays.asList(list), listener);
     }
 
     @Override
-    public ListDialogHelper setItems(List<? extends CharSequence> list) {
+    public ListDialogProtocol setItems(List<? extends CharSequence> list) {
         return setItems(list, null);
     }
 
     @Override
-    public ListDialogHelper setItems(List<? extends CharSequence> list, final OnItemClickListener listener) {
+    public ListDialogProtocol setItems(List<? extends CharSequence> list, final OnItemClickListener listener) {
         this.data = list;
         this.listener = listener;
         return this;
     }
 
     @Override
-    public ListDialogHelper setItems(RecyclerView.Adapter<?> adapter) {
+    public ListDialogProtocol setItems(RecyclerView.Adapter<?> adapter) {
         return this;
     }
 
     @Override
-    public ListDialogHelper setOnItemClickListener(final OnItemClickListener listener) {
+    public ListDialogProtocol setOnItemClickListener(final OnItemClickListener listener) {
         this.listener = listener;
         return this;
     }
 
     @Override
-    public ListDialogHelper show() {
+    public ListDialogProtocol show() {
         if (data != null) {
             CharSequence[] array = data.toArray(new CharSequence[data.size()]);
             if (type == 1) {
@@ -134,7 +134,7 @@ class ListDialogHelperImpl extends BaseDialogHelperImpl<ListDialogHelper> implem
     }
 
     @Override
-    public ViewProtocol getContentView() {
+    public View getContentView() {
         return null;
     }
 }
