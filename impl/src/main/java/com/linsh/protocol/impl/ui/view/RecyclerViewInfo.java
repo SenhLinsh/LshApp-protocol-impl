@@ -25,7 +25,7 @@ public class RecyclerViewInfo<T extends RecyclerView> extends ViewGroupInfo<T> {
     public void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
         super.onDeserialize(jsonObject, context, parent);
         orientation = JsonLayoutParser.getOrientation(jsonObject.get("orientation"), orientation);
-        spanCount = JsonObjectUtils.getInt(jsonObject.get("spanCount"), spanCount);
+        spanCount = JsonElementUtils.getInt(jsonObject.get("spanCount"), spanCount);
     }
 
     @Override

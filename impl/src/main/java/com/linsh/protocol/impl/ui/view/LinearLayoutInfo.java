@@ -46,7 +46,7 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
         protected void onDeserialize(JsonObject jsonObject) {
             super.onDeserialize(jsonObject);
             JsonElement element = (element = jsonObject.get("weight")) == null ? jsonObject.get("layout_weight") : element;
-            weight = JsonObjectUtils.getInt(element, weight);
+            weight = JsonElementUtils.getInt(element, weight);
             gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
         }
 

@@ -35,23 +35,39 @@ public class ViewInfo<T extends View> implements Info<T> {
     public int elevation;
     public float scaleX = 1;
     public float scaleY = 1;
+
     public int visibility = View.VISIBLE;
+    public Integer alpha;
+    public Boolean enabled;
+    public Boolean clickable;
 
     public ProtocolInfo protocol;
 
     protected void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
-        id = JsonObjectUtils.getString(jsonObject.get("id"));
+        id = JsonElementUtils.getString(jsonObject.get("id"));
 
         minWidth = JsonLayoutParser.getSize(jsonObject.get("minWidth"), minWidth);
         minHeight = JsonLayoutParser.getSize(jsonObject.get("minHeight"), minHeight);
         padding = JsonLayoutParser.getSize(jsonObject.get("padding"), padding);
         paddings = JsonLayoutParser.getSizeArray(jsonObject.get("paddings"), padding);
-
+        if (paddings == null) {
+            int paddingLeft = JsonLayoutParser.getSize(jsonObject.get("paddingLeft"), padding);
+            int paddingTop = JsonLayoutParser.getSize(jsonObject.get("paddingTop"), padding);
+            int paddingRight = JsonLayoutParser.getSize(jsonObject.get("paddingRight"), padding);
+            int paddingBottom = JsonLayoutParser.getSize(jsonObject.get("paddingBottom"), padding);
+            if (paddingLeft >= 0 || paddingTop >= 0 || paddingRight >= 0 || paddingBottom >= 0)
+                paddings = new int[]{paddingLeft, paddingTop, paddingRight, paddingBottom};
+        }
         background = JsonLayoutParser.getBackground(jsonObject.get("background"), context);
         elevation = JsonLayoutParser.getSize(jsonObject.get("elevation"), elevation);
-        scaleX = JsonObjectUtils.getFloat(jsonObject.get("scaleX"), scaleX);
-        scaleY = JsonObjectUtils.getFloat(jsonObject.get("scaleY"), scaleY);
+        scaleX = JsonElementUtils.getFloat(jsonObject.get("scaleX"), scaleX);
+        scaleY = JsonElementUtils.getFloat(jsonObject.get("scaleY"), scaleY);
+
         visibility = JsonLayoutParser.getVisibility(jsonObject.get("visibility"), visibility);
+        alpha = JsonElementUtils.getIntObj(jsonObject.get("alpha"));
+        enabled = JsonElementUtils.getBooleanObj(jsonObject.get("enabled"));
+        clickable = JsonElementUtils.getBooleanObj(jsonObject.get("clickable"));
+
 
         protocol = JsonLayoutParser.getProtocol(jsonObject.get("protocol"), context);
     }
@@ -74,8 +90,7 @@ public class ViewInfo<T extends View> implements Info<T> {
         if (minWidth >= 0)
             view.setMinimumWidth(minWidth);
 
-        if (padding != 0)
-            view.setPadding(padding, padding, padding, padding);
+        if (padding != 0) view.setPadding(padding, padding, padding, padding);
         if (paddings != null && paddings.length >= 4)
             view.setPadding(paddings[0], paddings[1], paddings[2], paddings[3]);
 
@@ -91,11 +106,11 @@ public class ViewInfo<T extends View> implements Info<T> {
         if (elevation != 0 && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             view.setElevation(elevation);
 
-        if (scaleX >= 0)
-            view.setScaleX(scaleX);
-        if (scaleY >= 0)
-            view.setScaleY(scaleY);
-        if (visibility != 0)
-            view.setVisibility(visibility);
+        if (scaleX >= 0) view.setScaleX(scaleX);
+        if (scaleY >= 0) view.setScaleY(scaleY);
+        if (visibility != 0) view.setVisibility(visibility);
+        if (alpha != null) view.setAlpha(alpha);
+        if (enabled != null) view.setEnabled(enabled);
+        if (clickable != null) view.setClickable(clickable);
     }
 }

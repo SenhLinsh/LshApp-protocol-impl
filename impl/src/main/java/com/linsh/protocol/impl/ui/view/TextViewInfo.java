@@ -34,8 +34,8 @@ public class TextViewInfo<T extends TextView> extends ViewInfo<T> {
         gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
         textSize = JsonLayoutParser.getSize(jsonObject.get("textSize"), textSize);
         textColor = JsonLayoutParser.getColor(jsonObject.get("textColor"), context);
-        text = JsonObjectUtils.getString(jsonObject.get("text"));
-        hint = JsonObjectUtils.getString(jsonObject.get("hint"));
+        text = JsonElementUtils.getString(jsonObject.get("text"));
+        hint = JsonElementUtils.getString(jsonObject.get("hint"));
     }
 
     @Override

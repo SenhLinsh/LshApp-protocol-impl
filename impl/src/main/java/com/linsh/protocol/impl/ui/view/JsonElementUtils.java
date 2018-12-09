@@ -11,7 +11,7 @@ import com.google.gson.JsonPrimitive;
  *    desc   :
  * </pre>
  */
-public class JsonObjectUtils {
+public class JsonElementUtils {
 
     public static String getString(JsonElement element) {
         if (element != null && element.isJsonPrimitive()) {
@@ -52,4 +52,26 @@ public class JsonObjectUtils {
         }
         return false;
     }
+
+    public static Integer getIntObj(JsonElement element) {
+        if (element != null && element.isJsonPrimitive()) {
+            JsonPrimitive primitive = element.getAsJsonPrimitive();
+            if (primitive.isNumber()) {
+                return primitive.getAsInt();
+            }
+        }
+        return null;
+    }
+
+
+    public static Boolean getBooleanObj(JsonElement element) {
+        if (element != null && element.isJsonPrimitive()) {
+            JsonPrimitive primitive = element.getAsJsonPrimitive();
+            if (primitive.isBoolean()) {
+                return primitive.getAsBoolean();
+            }
+        }
+        return null;
+    }
+
 }
