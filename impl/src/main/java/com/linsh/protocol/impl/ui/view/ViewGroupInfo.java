@@ -61,7 +61,15 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
             element = (element = jsonObject.get("margin")) == null ? jsonObject.get("layout_margin") : element;
             margin = JsonLayoutParser.getSize(element, margin);
             element = (element = jsonObject.get("margins")) == null ? jsonObject.get("layout_margins") : element;
-            margins = JsonLayoutParser.getSizeArray(element, 0);
+            margins = JsonLayoutParser.getSizeArray(element, margin);
+            if (margins == null) {
+                int marginLeft = JsonLayoutParser.getSize(jsonObject.get("marginLeft"), margin);
+                int marginTop = JsonLayoutParser.getSize(jsonObject.get("marginTop"), margin);
+                int marginRight = JsonLayoutParser.getSize(jsonObject.get("marginRight"), margin);
+                int marginBottom = JsonLayoutParser.getSize(jsonObject.get("marginBottom"), margin);
+                if (marginLeft >= 0 || marginTop >= 0 || marginRight >= 0 || marginBottom >= 0)
+                    margins = new int[]{marginLeft, marginTop, marginRight, marginBottom};
+            }
         }
 
         protected T getLayoutParams() {
