@@ -51,6 +51,7 @@ class InfoIdentifier {
                         viewInfoClass = viewAndInfoClass[0];
                         break;
                     }
+                    tempClass = viewClass.getSuperclass();
                 }
             }
             if (viewInfoClass == null)
