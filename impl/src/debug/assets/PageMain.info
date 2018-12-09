@@ -1,12 +1,21 @@
 {
-	name: "RecyclerView",
+	name: "LinearLayout",
 	width: "MP",
 	height: "MP",
 	background: "#FFFF55FF",
 	padding: 20,
 
-	protocol: {
-		name: "ListViewProtocol",
-		impl: "JsonListViewProtocolImpl"
-	}
+	children: [
+	    {
+	        name: "TextView",
+	        weight: 1,
+	        text: "TextView1"
+	    },
+	    {
+	        name: "TextView",
+	        weight: 1,
+	        text: "TextView2",
+	        background: "#F00"
+	    }
+	]
 }

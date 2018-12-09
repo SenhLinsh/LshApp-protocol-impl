@@ -21,9 +21,9 @@ import com.linsh.protocol.ui.view.Info;
 public class ViewInfo<T extends View> implements Info<T> {
     // View
     public Class<T> name;
-    public String id;
-
     public ViewGroupInfo.LayoutParamsInfo layoutParams;
+
+    public String id;
 
     public int minWidth = -1;
     public int minHeight = -1;
@@ -41,8 +41,6 @@ public class ViewInfo<T extends View> implements Info<T> {
 
     protected void onDeserialize(JsonObject jsonObject, JsonDeserializationContext context, ViewInfo parent) {
         id = JsonObjectUtils.getString(jsonObject.get("id"));
-
-        layoutParams = JsonLayoutParser.getLayoutParamsInfo(jsonObject, "layoutParams", parent);
 
         minWidth = JsonLayoutParser.getSize(jsonObject.get("minWidth"), minWidth);
         minHeight = JsonLayoutParser.getSize(jsonObject.get("minHeight"), minHeight);

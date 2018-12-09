@@ -275,9 +275,9 @@ public class JsonLayoutParser {
         return null;
     }
 
-    public static ViewGroupInfo.LayoutParamsInfo getLayoutParamsInfo(JsonObject jsonObject, String fieldName, ViewInfo parent) {
+    public static ViewGroupInfo.LayoutParamsInfo getLayoutParamsInfo(JsonObject jsonObject, ViewInfo parent) {
         ViewGroupInfo.LayoutParamsInfo layoutParamsInfo = InfoIdentifier.getLayoutParamsInfo(parent);
-        JsonElement element = jsonObject.get(fieldName);
+        JsonElement element = jsonObject.get("layoutParams");
         if (element != null && element.isJsonObject()) {
             layoutParamsInfo.onDeserialize(element.getAsJsonObject());
         } else {

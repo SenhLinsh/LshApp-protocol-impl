@@ -23,6 +23,7 @@ public class ViewInfoTypeAdapter implements JsonDeserializer<ViewInfo> {
         if (element == null) return null;
         JsonObject jsonObject = element.getAsJsonObject();
         ViewInfo viewInfo = InfoIdentifier.getViewInfo(jsonObject);
+        viewInfo.layoutParams = JsonLayoutParser.getLayoutParamsInfo(jsonObject, null);
         viewInfo.onDeserialize(jsonObject, context, null);
         return viewInfo;
     }

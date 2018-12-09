@@ -28,9 +28,11 @@ public class ViewGroupInfo<T extends ViewGroup> extends ViewInfo<T> {
         JsonElement element = jsonObject.get("children");
         if (element != null && element.isJsonArray()) {
             children = new ArrayList<>();
-            JsonArray jsonArray = element.getAsJsonArray();
-            for (JsonElement jsonElement : jsonArray) {
-                children.add(context.deserialize(jsonElement, ViewInfo.class));
+            JsonArray childArray = element.getAsJsonArray();
+            for (JsonElement childElement : childArray) {
+                ViewInfo viewInfo = context.deserialize(childElement, ViewInfo.class);
+                viewInfo.layoutParams = JsonLayoutParser.getLayoutParamsInfo(childElement.getAsJsonObject(), this);
+                children.add(viewInfo);
             }
         }
     }
