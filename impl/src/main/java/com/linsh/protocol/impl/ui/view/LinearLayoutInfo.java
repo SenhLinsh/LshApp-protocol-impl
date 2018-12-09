@@ -47,7 +47,7 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
             super.onDeserialize(jsonObject);
             JsonElement element = (element = jsonObject.get("weight")) == null ? jsonObject.get("layout_weight") : element;
             weight = JsonElementUtils.getInt(element, weight);
-            gravity = JsonLayoutParser.getGravity(jsonObject.get("gravity"), gravity);
+            gravity = JsonLayoutParser.getGravity(jsonObject.get("layout_gravity"), gravity);
         }
 
         @Override
@@ -58,7 +58,8 @@ public class LinearLayoutInfo<T extends LinearLayout> extends ViewGroupInfo<T> {
         @Override
         protected void onInflateLayoutParams(T layoutParams) {
             super.onInflateLayoutParams(layoutParams);
-            layoutParams.weight = weight;
+            if (gravity >= 0) layoutParams.gravity = gravity;
+            if (weight >= 0) layoutParams.weight = weight;
         }
     }
 }
