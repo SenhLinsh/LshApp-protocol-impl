@@ -44,6 +44,7 @@ class ColorUtils {
 
     private static int parseHexStr(String hex) {
         hex = hex.toUpperCase();
+        if (hex.length() == 1) hex += hex;
         int res = 0;
         for (int i = 0; i < hex.length(); i++) {
             char c = hex.charAt(i);
