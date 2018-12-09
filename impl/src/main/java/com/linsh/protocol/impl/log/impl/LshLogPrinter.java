@@ -9,8 +9,6 @@ import com.linsh.utilseverywhere.FileUtils;
 import java.io.File;
 import java.util.Date;
 
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * <pre>
  *    author : Senh Linsh
@@ -25,16 +23,9 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
     private File logFile;
     private Date refreshDate = new Date();
 
-    public LshLogPrinter(LogConfig config) {
+    LshLogPrinter(LogConfig config) {
         logDir = config.cacheDir();
         logFile = new File(logDir, DateUtils.getCurDateStr());
-        // 清楚无效文件
-        Schedulers.io().createWorker().schedule(new Runnable() {
-            @Override
-            public void run() {
-                clearExpiredLog();
-            }
-        });
     }
 
     /**
@@ -69,30 +60,6 @@ class LshLogPrinter extends LshLogger implements LogPrinter {
                 || refreshDate.getDate() != date.getTime()) {
             logFile = new File(logDir, DateUtils.getCurDateStr());
             refreshDate = date;
-        }
-    }
-
-    /**
-     * 清除过期 & 无效日志文件
-     */
-    private void clearExpiredLog() {
-        File[] files = logDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                String name = file.getName();
-                long date = DateUtils.parse(name, "yyyy-MM-dd");
-                if (date > 0 && System.currentTimeMillis() - date < 7 * 24 * 60 * 60 * 1000L) {
-                    continue;
-                }
-                boolean delete = file.delete();
-                if (delete) {
-                    Client.log().print().i("删除无效 log 文件: " + file.getName());
-                } else {
-                    Client.log().print().e("删除无效 log 文件失败: " + file.getName());
-                }
-            }
-        } else {
-            Client.log().print().e("IILogPrinter.logDir.listFiles() == null");
         }
     }
 }
