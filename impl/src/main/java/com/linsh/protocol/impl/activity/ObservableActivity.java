@@ -93,7 +93,7 @@ public abstract class ObservableActivity extends AppCompatActivity implements IO
         // 检查如果已经订阅, 则返回该类的实例
         List<Class<? extends ActivitySubscribe>> cache = sCachedSubscriberClasses.get(classOfSubscriber);
         if (cache != null) {
-            if (cache.size() != 0) {
+            if (cache.size() != 0 && mSubscribers != null) {
                 Class<? extends ActivitySubscribe> subscribe = cache.get(0);
                 Set<ActivitySubscribe> subscribers = mSubscribers.get(subscribe);
                 for (ActivitySubscribe subscriber : subscribers) {
