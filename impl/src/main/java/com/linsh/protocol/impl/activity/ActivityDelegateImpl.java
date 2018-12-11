@@ -68,7 +68,7 @@ class ActivityDelegateImpl implements ActivityDelegate {
 
     @Override
     public IntentDelegate intent() {
-        return new IntentDelegateImpl();
+        return new IntentDelegateImpl().context((Activity) observableActivity);
     }
 
     @Override

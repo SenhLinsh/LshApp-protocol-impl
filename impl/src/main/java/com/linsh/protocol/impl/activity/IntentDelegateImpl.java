@@ -1,6 +1,7 @@
 package com.linsh.protocol.impl.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
@@ -27,6 +28,7 @@ import java.util.List;
 class IntentDelegateImpl implements IntentDelegate {
 
     private static final String INTENT_EXTRA_PREFIX = "intent_extra_prefix_";
+    private Context context;
     private Intent intent;
     private ArrayList<String> subscribers;
 
@@ -40,6 +42,11 @@ class IntentDelegateImpl implements IntentDelegate {
 
     IntentDelegateImpl(Intent intent) {
         this.intent = intent;
+    }
+
+    IntentDelegate context(Context context) {
+        this.context = context;
+        return this;
     }
 
     @Override
@@ -319,8 +326,13 @@ class IntentDelegateImpl implements IntentDelegate {
 
     @Override
     public void start() {
-        newTask();
-        ContextUtils.get().startActivity(intent);
+        if (context == null) {
+            context = ContextUtils.get();
+            newTask();
+        } else if (!(context instanceof Activity)) {
+            newTask();
+        }
+        context.startActivity(intent);
     }
 
     @Override
